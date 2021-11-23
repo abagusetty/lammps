@@ -396,7 +396,7 @@ class UCL_Kernel {
   }
 
  private:
-  sycl::kernel _kernel;
+  sycl::kernel* _kernel;
   sycl::device* _device;
   uint _dimensions;
   size_t _block_size[3];
@@ -455,39 +455,31 @@ inline int UCL_Kernel::set_function(UCL_Program &program, const char *function) 
 }
 
 void UCL_Kernel::run() {
-  clEnqueueNDRangeKernel(_cq,_kernel,_dimensions,NULL,_num_blocks,_block_size,0,NULL,NULL);
-  #ifdef GERYON_OCL_FLUSH
-  ucl_flush(_cq);
-  #endif
+  //clEnqueueNDRangeKernel(_cq,_kernel,_dimensions,NULL,_num_blocks,_block_size,0,NULL,NULL);
 
   if (_dimensions == 1) {
     sycl::nd_range<1> execRange( sycl::range<1>(_num_blocks[0]),
 				 sycl::range<1>(_block_size[0]) );
-
     _cq.submit([&](sycl::handler& cgh) {
-	cgh.parallel_for(execRange, );	
+	cgh.parallel_for(execRange, *kernel);	
       });
-
   } else if (_dimensions == 2) {
     sycl::nd_range<2> execRange( sycl::range<1>(_num_blocks[0], _num_blocks[1]),
 				 sycl::range<1>(_block_size[0], _block_size[1]) );
-
     _cq.submit([&](sycl::handler& cgh) {
-	cgh.parallel_for(execRange, );	
+	cgh.parallel_for(execRange, *kernel);	
       });
   } else if (_dimensions == 3) {
     sycl::nd_range<3> execRange( sycl::range<1>(_num_blocks[0], _num_blocks[1], _num_blocks[2]),
 				 sycl::range<1>(_block_size[0], _block_size[1], _block_size[2]) );
-
     _cq.submit([&](sycl::handler& cgh) {
-	cgh.parallel_for(execRange, );	
+	cgh.parallel_for(execRange, *kernel);	
       });
   }
   
 #ifdef GERYON_OCL_FLUSH
   ucl_flush(_cq);
 #endif
-  
 }
 
 } // namespace
