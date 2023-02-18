@@ -1,19 +1,3 @@
-// **************************************************************************
-//                               pre_cuda_sycl.hpp
-//                             -------------------
-//                           W. Michael Brown (ORNL)
-//                           Nitin Dhamankar (Intel)
-//
-//  Device-side preprocessor definitions for SYCL builds
-//
-// __________________________________________________________________________
-//    This file is part of the LAMMPS Accelerator Library (LAMMPS_AL)
-// __________________________________________________________________________
-//
-//    begin                :
-//    email                : abagusetty@anl.gov
-// ***************************************************************************/
-
 //*************************************************************************
 //                       Device Configuration Definitions
 //                    See lal_preprocessor.h for definitions
@@ -30,13 +14,8 @@
 // -------------------------------------------------------------------------
 
 
-#if defined(__HIP_PLATFORM_HCC__) || defined(__HIP_PLATFORM_AMD__)
-#define CONFIG_ID 303
-#define SIMD_SIZE 64
-#else
 #define CONFIG_ID 103
-#define SIMD_SIZE 32
-#endif
+#define SIMD_SIZE 8
 
 #define MEM_THREADS SIMD_SIZE
 #define SHUFFLE_AVAIL 1
@@ -59,54 +38,11 @@
 #define PPPM_MAX_SPLINE 8
 
 // -------------------------------------------------------------------------
-//                          LEGACY DEVICE CONFIGURATION
-// -------------------------------------------------------------------------
-
-#ifdef __CUDA_ARCH__
-
-#if (__CUDA_ARCH__ < 200)
-
-#undef CONFIG_ID
-#define CONFIG_ID 101
-#define MEM_THREADS 16
-#undef THREADS_PER_ATOM
-#define THREADS_PER_ATOM 1
-#undef THREADS_PER_CHARGE
-#define THREADS_PER_CHARGE 16
-#undef BLOCK_PAIR
-#define BLOCK_PAIR 64
-#undef BLOCK_BIO_PAIR
-#define BLOCK_BIO_PAIR 64
-#undef BLOCK_NBOR_BUILD
-#define BLOCK_NBOR_BUILD 64
-#undef MAX_SHARED_TYPES
-#define MAX_SHARED_TYPES 8
-#undef SHUFFLE_AVAIL
-#define SHUFFLE_AVAIL 0
-
-#elseif (__CUDA_ARCH__ < 300)
-
-#undef CONFIG_ID
-#define CONFIG_ID 102
-#undef BLOCK_PAIR
-#define BLOCK_PAIR 128
-#undef BLOCK_BIO_PAIR
-#define BLOCK_BIO_PAIR 128
-#undef MAX_SHARED_TYPES
-#define MAX_SHARED_TYPES 8
-#undef SHUFFLE_AVAIL
-#define SHUFFLE_AVAIL 0
-
-#endif
-
-#endif
-
-// -------------------------------------------------------------------------
 //                              KERNEL MACROS
 // -------------------------------------------------------------------------
 
 #ifdef USE_SYCL
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #endif
 
 #define fast_mul(X,Y) (X)*(Y)
@@ -132,13 +68,13 @@
 //                         KERNEL MACROS - TEXTURES
 // -------------------------------------------------------------------------
 
-#if defined(__HIP_PLATFORM_HCC__) || defined(__HIP_PLATFORM_AMD__)
-#define _texture(name, type)  __device__ type* name
-#define _texture_2d(name, type)  __device__ type* name
-#else
-#define _texture(name, type)  texture<type> name
-#define _texture_2d(name, type) texture<type,1> name
-#endif
+// #if defined(__HIP_PLATFORM_HCC__) || defined(__HIP_PLATFORM_AMD__)
+// #define _texture(name, type)  __device__ type* name
+// #define _texture_2d(name, type)  __device__ type* name
+// #else
+#define _texture(name, type)  sycl::image<1>* name //texture<type> name
+#define _texture_2d(name, type) sycl::image<2>* name //texture<type, cudaTextureType2D> name
+// #endif
 
 #if (__CUDACC_VER_MAJOR__ < 11)
   #ifdef _DOUBLE_DOUBLE
@@ -172,56 +108,33 @@
   #define mu_tex mu_
 #endif
 
-#if defined(__HIP_PLATFORM_HCC__) || defined(__HIP_PLATFORM_AMD__)
-
-#undef fetch4
-#undef fetch
-
-#ifdef _DOUBLE_DOUBLE
-#define fetch4(ans,i,pos_tex) (ans=*(((double4*)pos_tex) + i))
-#define fetch(ans,i,q_tex)    (ans=*(((double *)  q_tex) + i))
-#else
-#define fetch4(ans,i,pos_tex) (ans=*(((float4*)pos_tex) + i))
-#define fetch(ans,i,q_tex)    (ans=*(((float *)  q_tex) + i))
-#endif
-
-#endif
-
 // -------------------------------------------------------------------------
 //                           KERNEL MACROS - MATH
 // -------------------------------------------------------------------------
 
-#ifdef CUDA_PRE_THREE
-struct __builtin_align__(16) _double4
-{
-  double x, y, z, w;
-};
-typedef struct _double4 double4;
-#endif
-
 #ifdef _DOUBLE_DOUBLE
 
-#define ucl_exp exp
-#define ucl_powr pow
-#define ucl_atan atan
-#define ucl_cbrt cbrt
-#define ucl_ceil ceil
-#define ucl_abs fabs
-#define ucl_rsqrt rsqrt
-#define ucl_sqrt sqrt
-#define ucl_recip(x) ((numtyp)1.0/(x))
+#define ucl_exp sycl::exp
+#define ucl_powr sycl::powr
+#define ucl_atan sycl::atan
+#define ucl_cbrt sycl::cbrt
+#define ucl_ceil sycl::ceil
+#define ucl_abs sycl::fabs
+#define ucl_rsqrt sycl::rsqrt
+#define ucl_sqrt sycl::sqrt
+#define ucl_recip sycl::recip
 
 #else
 
-#define ucl_atan atanf
-#define ucl_cbrt cbrtf
-#define ucl_ceil ceilf
-#define ucl_abs fabsf
-#define ucl_recip(x) ((numtyp)1.0/(x))
-#define ucl_rsqrt rsqrtf
-#define ucl_sqrt sqrtf
-#define ucl_exp expf
-#define ucl_powr powf
+#define ucl_exp sycl::native::exp
+#define ucl_powr sycl::native::powr
+#define ucl_atan sycl::atanf
+#define ucl_cbrt sycl::cbrtf
+#define ucl_ceil sycl::ceilf
+#define ucl_abs sycl::fabsf
+#define ucl_rsqrt sycl::native::rsqrt
+#define ucl_sqrt sycl::native::sqrt
+#define ucl_recip sycl::native::recip
 
 #endif
 
@@ -229,94 +142,26 @@ typedef struct _double4 double4;
 //                         KERNEL MACROS - SHUFFLE
 // -------------------------------------------------------------------------
 
-#if SHUFFLE_AVAIL == 1
-
-#ifndef USE_HIP
-#if (__CUDACC_VER_MAJOR__ < 9)
-#define CUDA_PRE_NINE
-#endif
-#endif
-
-#if defined(CUDA_PRE_NINE) || defined(__HIP_PLATFORM_HCC__) || defined(__HIP_PLATFORM_AMD__)
-
-  #ifdef _SINGLE_SINGLE
-    #define shfl_down __shfl_down
-    #define shfl_xor __shfl_xor
-  #else
-    ucl_inline double shfl_down(double var, unsigned int delta, int width) {
-      int2 tmp;
-      tmp.x = __double2hiint(var);
-      tmp.y = __double2loint(var);
-      tmp.x = __shfl_down(tmp.x,delta,width);
-      tmp.y = __shfl_down(tmp.y,delta,width);
-      return __hiloint2double(tmp.x,tmp.y);
-    }
-    ucl_inline double shfl_xor(double var, unsigned int lanemask, int width) {
-      int2 tmp;
-      tmp.x = __double2hiint(var);
-      tmp.y = __double2loint(var);
-      tmp.x = __shfl_xor(tmp.x,lanemask,width);
-      tmp.y = __shfl_xor(tmp.y,lanemask,width);
-      return __hiloint2double(tmp.x,tmp.y);
-    }
-  #endif
-  #define simd_broadcast_i __shfl
-  #define simd_broadcast_f __shfl
-  #ifdef _DOUBLE_DOUBLE
-    ucl_inline double simd_broadcast_d(double var, unsigned int src,
-                                       int width) {
-      int2 tmp;
-      tmp.x = __double2hiint(var);
-      tmp.y = __double2loint(var);
-      tmp.x = __shfl(tmp.x,src,width);
-      tmp.y = __shfl(tmp.y,src,width);
-      return __hiloint2double(tmp.x,tmp.y);
-    }
-  #endif
-
-#else
-
-  #ifdef _SINGLE_SINGLE
-  ucl_inline float shfl_down(float var, unsigned int delta, int width) {
-    return __shfl_down_sync(0xffffffff, var, delta, width);
-  }
-  ucl_inline float shfl_xor(float var, unsigned int lanemask, int width) {
-    return __shfl_xor_sync(0xffffffff, var, lanemask, width);
-  }
-  #else
-  ucl_inline double shfl_down(double var, unsigned int delta, int width) {
-    int2 tmp;
-    tmp.x = __double2hiint(var);
-    tmp.y = __double2loint(var);
-    tmp.x = __shfl_down_sync(0xffffffff,tmp.x,delta,width);
-    tmp.y = __shfl_down_sync(0xffffffff,tmp.y,delta,width);
-    return __hiloint2double(tmp.x,tmp.y);
-  }
-  ucl_inline double shfl_xor(double var, unsigned int lanemask, int width) {
-    int2 tmp;
-    tmp.x = __double2hiint(var);
-    tmp.y = __double2loint(var);
-    tmp.x = __shfl_xor_sync(0xffffffff,tmp.x,lanemask,width);
-    tmp.y = __shfl_xor_sync(0xffffffff,tmp.y,lanemask,width);
-    return __hiloint2double(tmp.x,tmp.y);
-  }
-  #endif
-  #define simd_broadcast_i(var, src, width) \
-    __shfl_sync(0xffffffff, var, src, width)
-  #define simd_broadcast_f(var, src, width) \
-    __shfl_sync(0xffffffff, var, src, width)
-  #ifdef _DOUBLE_DOUBLE
-  ucl_inline double simd_broadcast_d(double var, unsigned int src, int width) {
-    int2 tmp;
-    tmp.x = __double2hiint(var);
-    tmp.y = __double2loint(var);
-    tmp.x = __shfl_sync(0xffffffff,tmp.x,src,width);
-    tmp.y = __shfl_sync(0xffffffff,tmp.y,src,width);
-    return __hiloint2double(tmp.x,tmp.y);
-  }
-  #endif
-#endif
-
+ucl_inline float shfl_down(float var, unsigned int delta, sycl::sub_group& sg) {
+  return sg.shuffle_down(var, delta);  
+}
+ucl_inline float shfl_xor(float var, unsigned int lanemask, sycl::sub_group& sg) {
+  return sg.shuffle_xor(var, lanemask);  
+}
+#define simd_broadcast_i(var, src, width)	\
+  __shfl_sync(0xffffffff, var, src, width)
+#define simd_broadcast_f(var, src, width)	\
+  __shfl_sync(0xffffffff, var, src, width)
+#ifdef _DOUBLE_DOUBLE
+ucl_inline double simd_broadcast_d(double var, unsigned int src) {
+  sycl::group_broadcast();
+  int2 tmp;
+  tmp.x = __double2hiint(var);
+  tmp.y = __double2loint(var);
+  tmp.x = __shfl_sync(0xffffffff,tmp.x,src);
+  tmp.y = __shfl_sync(0xffffffff,tmp.y,src);
+  return __hiloint2double(tmp.x,tmp.y);
+}
 #endif
 
 // -------------------------------------------------------------------------

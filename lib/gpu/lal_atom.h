@@ -27,6 +27,11 @@ using namespace ucl_opencl;
 #ifndef LAL_NO_OCL_EV_JIT
 #define LAL_OCL_EV_JIT
 #endif
+#elif defined(USE_SYCL)
+#include "geryon/sycl_timer.h"
+#include "geryon/sycl_mat.h"
+#include "geryon/sycl_kernel.h"
+using namespace ucl_sycl;
 #elif defined(USE_CUDART)
 #include "geryon/nvc_timer.h"
 #include "geryon/nvc_mat.h"

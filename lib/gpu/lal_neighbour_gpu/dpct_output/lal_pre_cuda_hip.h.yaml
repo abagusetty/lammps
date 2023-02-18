@@ -1,0 +1,654 @@
+---
+MainSourceFile:  '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/dpct_output/lal_pre_cuda_hip.h'
+Replacements:
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          0
+    Length:          0
+    ReplacementText: "#include <CL/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          2304
+    Length:          13
+    ReplacementText: DPCT_COMPATIBILITY_TEMP
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          2324
+    Length:          13
+    ReplacementText: DPCT_COMPATIBILITY_TEMP
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3316
+    Length:          13
+    ReplacementText: DPCT_COMPATIBILITY_TEMP
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3335
+    Length:          13
+    ReplacementText: DPCT_COMPATIBILITY_TEMP
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3686
+    Length:          11
+    ReplacementText: 'item_ct1.get_local_id(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3718
+    Length:          11
+    ReplacementText: 'item_ct1.get_local_id(1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3749
+    Length:          10
+    ReplacementText: 'item_ct1.get_group(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3779
+    Length:          10
+    ReplacementText: 'item_ct1.get_group(1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3811
+    Length:          10
+    ReplacementText: 'item_ct1.get_local_range(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3914
+    Length:          10
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          3978
+    Length:          10
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          4036
+    Length:          0
+    ReplacementText: "/*\nDPCT1058:17: \"atomicAdd\" is not migrated because it is not called in the code.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          4100
+    Length:          10
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9108
+    Length:          0
+    ReplacementText: ",\n                              sycl::nd_item<3> item_ct1"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9116
+    Length:          4
+    ReplacementText: 'sycl::int2'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9126
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:0: The  call is used instead of the __double2hiint call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9134
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9138
+    Length:          19
+    ReplacementText: 'dpct::cast_double_to_int(var)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9159
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:1: The  call is used instead of the __double2loint call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9167
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9171
+    Length:          19
+    ReplacementText: 'dpct::cast_double_to_int(var, false)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9192
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1023:2: The DPC++ sub-group does not support mask options for dpct::shift_sub_group_left.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9200
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9204
+    Length:          46
+    ReplacementText: 'dpct::shift_sub_group_left(item_ct1.get_sub_group(), tmp.x(), delta, width)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9252
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1023:3: The DPC++ sub-group does not support mask options for dpct::shift_sub_group_left.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9260
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9264
+    Length:          46
+    ReplacementText: 'dpct::shift_sub_group_left(item_ct1.get_sub_group(), tmp.y(), delta, width)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9312
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:4: The  call is used instead of the __hiloint2double call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9323
+    Length:          29
+    ReplacementText: 'dpct::cast_ints_to_double(tmp.x(), tmp.y())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9431
+    Length:          0
+    ReplacementText: ",\n                             sycl::nd_item<3> item_ct1"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9439
+    Length:          4
+    ReplacementText: 'sycl::int2'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9449
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:5: The  call is used instead of the __double2hiint call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9457
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9461
+    Length:          19
+    ReplacementText: 'dpct::cast_double_to_int(var)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9482
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:6: The  call is used instead of the __double2loint call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9490
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9494
+    Length:          19
+    ReplacementText: 'dpct::cast_double_to_int(var, false)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9515
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1023:7: The DPC++ sub-group does not support mask options for dpct::permute_sub_group_by_xor.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9523
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9527
+    Length:          48
+    ReplacementText: 'dpct::permute_sub_group_by_xor(item_ct1.get_sub_group(), tmp.x(), lanemask, width)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9577
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1023:8: The DPC++ sub-group does not support mask options for dpct::permute_sub_group_by_xor.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9585
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9589
+    Length:          48
+    ReplacementText: 'dpct::permute_sub_group_by_xor(item_ct1.get_sub_group(), tmp.y(), lanemask, width)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9639
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:9: The  call is used instead of the __hiloint2double call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9650
+    Length:          29
+    ReplacementText: 'dpct::cast_ints_to_double(tmp.x(), tmp.y())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9976
+    Length:          0
+    ReplacementText: ",\n                                     sycl::nd_item<3> item_ct1"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9984
+    Length:          4
+    ReplacementText: 'sycl::int2'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          9994
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:10: The  call is used instead of the __double2hiint call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10002
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10006
+    Length:          19
+    ReplacementText: 'dpct::cast_double_to_int(var)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10027
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:11: The  call is used instead of the __double2loint call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10035
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10039
+    Length:          19
+    ReplacementText: 'dpct::cast_double_to_int(var, false)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10060
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1023:12: The DPC++ sub-group does not support mask options for dpct::select_from_sub_group.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10068
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10072
+    Length:          39
+    ReplacementText: 'dpct::select_from_sub_group(item_ct1.get_sub_group(), tmp.x(), src, width)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10113
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1023:13: The DPC++ sub-group does not support mask options for dpct::select_from_sub_group.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10121
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10125
+    Length:          39
+    ReplacementText: 'dpct::select_from_sub_group(item_ct1.get_sub_group(), tmp.y(), src, width)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10166
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1017:14: The  call is used instead of the __hiloint2double call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+    Offset:          10177
+    Length:          29
+    ReplacementText: 'dpct::cast_ints_to_double(tmp.x(), tmp.y())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+DpctVersion:     2022.1.0
+MainHelperFileName: dpct
+USMLevel:        ''
+FeatureMap:
+  dpct.hpp:
+    dpct_compatibility_temp:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     DPCT_COMPATIBILITY_TEMP
+      SubFeatureMap:   {}
+  util.hpp:
+    cast_double_to_int:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     cast_double_to_int
+      SubFeatureMap:   {}
+    cast_ints_to_double:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     cast_ints_to_double
+      SubFeatureMap:   {}
+    permute_sub_group_by_xor:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     permute_sub_group_by_xor
+      SubFeatureMap:   {}
+    select_from_sub_group:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     select_from_sub_group
+      SubFeatureMap:   {}
+    shift_sub_group_left:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     shift_sub_group_left
+      SubFeatureMap:   {}
+CompileTargets:  {}
+OptionMap:
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           ''
+    Specified:       false
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  CustomHelperFileName:
+    Value:           dpct
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitClNamespace:
+    Value:           'false'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionFlag:
+    Value:           '4294967295'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

@@ -455,8 +455,13 @@ void Neighbor::get_host3(const int inum, const int nlist, int *ilist, int *numj,
     int GX=static_cast<int>(ceil(static_cast<double>(inum)*_threads_per_atom/
                                  block_size));
     _shared->k_nbor.set_size(GX,block_size);
+    #ifdef USE_SYCL
+    kernel_unpack(&dev_nbor, &dev_packed, &dev_packed_begin, &inum,
+		  &_threads_per_atom);
+    #else
     _shared->k_nbor.run(&dev_nbor, &dev_packed, &dev_packed_begin, &inum,
                         &_threads_per_atom);
+    #endif
     time_kernel.stop();
   }
 }

@@ -1,0 +1,494 @@
+---
+MainSourceFile:  MainSrcFiles_placehold
+Replacements:
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          672
+    Length:          18
+    ReplacementText: "#include <CL/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          690
+    Length:          26
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          878
+    Length:          0
+    ReplacementText: "/*\nDPCT1017:1: The  call is used instead of the __hiloint2double call. These two calls do not provide exactly the same functionality. Check the potential precision and/or performance issues for the generated code.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          918
+    Length:          4
+    ReplacementText: 'sycl::int4'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          960
+    Length:          4
+    ReplacementText: 'sycl::int4'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1007
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1009
+    Length:          28
+    ReplacementText: 'dpct::cast_ints_to_double(xy.y(), xy.x())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1050
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1052
+    Length:          28
+    ReplacementText: 'dpct::cast_ints_to_double(xy.w(), xy.z())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1093
+    Length:          1
+    ReplacementText: 'z()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1095
+    Length:          28
+    ReplacementText: 'dpct::cast_ints_to_double(zt.y(), zt.x())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1136
+    Length:          1
+    ReplacementText: 'w()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1138
+    Length:          28
+    ReplacementText: 'dpct::cast_ints_to_double(zt.w(), zt.z())'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1320
+    Length:          10
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1347
+    Length:          10
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1375
+    Length:          0
+    ReplacementText: "/*\nDPCT1058:6: \"atomicAdd\" is not migrated because it is not called in the code.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1439
+    Length:          10
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1513
+    Length:          7
+    ReplacementText: 'sycl::double4'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          1583
+    Length:          7
+    ReplacementText: 'sycl::double4'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          2120
+    Length:          11
+    ReplacementText: 'item_ct1.get_local_id(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          2183
+    Length:          10
+    ReplacementText: 'item_ct1.get_group(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          2245
+    Length:          10
+    ReplacementText: 'item_ct1.get_local_range().get(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          2309
+    Length:          9
+    ReplacementText: 'item_ct1.get_group_range(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          2320
+    Length:          0
+    ReplacementText: "/*\nDPCT1007:2: Migration of this CUDA API is not supported by the Intel(R) DPC++ Compatibility Tool.\n*/\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          2982
+    Length:          0
+    ReplacementText: ",\n                        sycl::nd_item<3> item_ct1, numtyp4 *lj1, numtyp4 *lj3,\n                        numtyp *sp_lj,\n                        dpct::accessor<local_allocate_store_pair, dpct::local, 2> red_acc"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3067
+    Length:          55
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3125
+    Length:          55
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3183
+    Length:          24
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3383
+    Length:          15
+    ReplacementText: "/*\n  DPCT1065:0: Consider replacing sycl::nd_item::barrier() with sycl::nd_item::barrier(sycl::access::fence_space::local_space) for better performance, if there is no access to global memory.\n  */\n  item_ct1.barrier()"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3694
+    Length:          28
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3741
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3756
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          3771
+    Length:          1
+    ReplacementText: 'z()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4149
+    Length:          1
+    ReplacementText: 'w()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4514
+    Length:          1
+    ReplacementText: 'w()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4547
+    Length:          1
+    ReplacementText: 'z()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4608
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4613
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4639
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4644
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4670
+    Length:          1
+    ReplacementText: 'z()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4675
+    Length:          1
+    ReplacementText: 'z()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4811
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          4845
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          5068
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          5093
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          5118
+    Length:          1
+    ReplacementText: 'z()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          5224
+    Length:          1
+    ReplacementText: 'x()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          5260
+    Length:          1
+    ReplacementText: 'y()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Offset:          5296
+    Length:          1
+    ReplacementText: 'z()'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+    Digest:          91bb4837bc656925c8b3d9dbfda1b620
+DpctVersion:     2021.3.0
+MainHelperFileName: dpct
+USMLevel:        restricted
+FeatureMap:
+  dpct.hpp:
+    non_local_include_dependency:
+      IsCalled:        true
+      CallerSrcFiles:
+        - ''
+      FeatureName:     ''
+  memory.hpp:
+    dpct_accessor:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+      FeatureName:     ''
+    memory_region:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+      FeatureName:     ''
+    memory_traits:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+      FeatureName:     ''
+    typedef_byte_t:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+      FeatureName:     ''
+  util.hpp:
+    cast_ints_to_double:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/lal_lj.cu'
+      FeatureName:     ''
+...

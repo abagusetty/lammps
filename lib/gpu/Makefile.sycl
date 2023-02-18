@@ -1,0 +1,113 @@
+# /* ----------------------------------------------------------------------
+#  Generic Linux Makefile for SYCL
+# ------------------------------------------------------------------------- */
+
+# this setting should match LAMMPS Makefile
+# one of LAMMPS_SMALLBIG (default), LAMMPS_BIGBIG and LAMMPS_SMALLSMALL
+
+LMP_INC = -DLAMMPS_SMALLBIG
+
+# precision for GPU calculations
+# -D_SINGLE_SINGLE  # Single precision for all calculations
+# -D_DOUBLE_DOUBLE  # Double precision for all calculations
+# -D_SINGLE_DOUBLE  # Accumulation of forces, etc. in double
+
+
+SYCL_INC =
+SYCL_CPP = mpiicpx -std=c++17 -fsycl -fsycl-unnamed-lambda -sycl-std=2020 -O2 -DMPICH_IGNORE_CXX_SEEK $(LMP_INC) $(SYCL_INC)
+SYCL_LINK = 
+SYCL_PREC = -D_SINGLE_DOUBLE
+SYCL_TUNE = -DMPI_GERYON -DGERYON_NUMA_FISSION -DUCL_NO_EXIT -fp-model fast=2 -no-prec-div
+
+BIN_DIR = ./
+OBJ_DIR = ./
+LIB_DIR = ./
+AR = ar
+BSH = /bin/sh
+
+# Common headers for kernels
+PRE1_H = lal_preprocessor.h lal_aux_fun1.h
+
+# Headers for Geryon
+UCL_H   = $(wildcard ./geryon/ucl*.h)
+SYCL_H  = $(wildcard ./geryon/sycl*.hpp) $(UCL_H) lal_precision.h
+
+# Headers for Host files
+HOST_H = lal_answer.h lal_atom.h lal_balance.h lal_base_atomic.h \
+         lal_device.h lal_neighbor.h \
+         lal_neighbor_shared.h lal_pre_sycl_config.h $(SYCL_H)
+
+# Source files
+SRCS := $(wildcard ./lal_*.cpp)
+OBJS := $(subst ./,$(OBJ_DIR)/,$(SRCS:%.cpp=%.o))
+CUS  := $(wildcard lal_*.cu)
+KERS := $(subst ./,$(OBJ_DIR)/,$(CUS:lal_%.cu=%_cl.h))
+KERS := $(addprefix $(OBJ_DIR)/, $(KERS))
+
+# targets
+
+GPU_LIB = $(LIB_DIR)/libgpu.a
+
+EXECS = $(BIN_DIR)/sycl_get_devices
+
+all: $(OBJ_DIR) $(KERS) $(GPU_LIB) $(EXECS)
+
+$(OBJ_DIR):
+	mkdir -p $@
+
+# Compiler and linker
+
+SYCL  = $(SYCL_CPP) $(SYCL_PREC) $(SYCL_TUNE) -DUSE_SYCL
+
+# device code compilation
+
+$(OBJ_DIR)/atom_cl.h: lal_atom.cu lal_preprocessor.h
+	$(BSH) ./geryon/file_to_cstr.sh atom lal_preprocessor.h lal_atom.cu $(OBJ_DIR)/atom_cl.h
+
+$(OBJ_DIR)/neighbor_cpu_cl.h: lal_neighbor_cpu.cu lal_preprocessor.h
+	$(BSH) ./geryon/file_to_cstr.sh neighbor_cpu lal_preprocessor.h lal_neighbor_cpu.cu $(OBJ_DIR)/neighbor_cpu_cl.h
+
+$(OBJ_DIR)/neighbor_gpu_cl.h: lal_neighbor_gpu.cu lal_preprocessor.h
+	$(BSH) ./geryon/file_to_cstr.sh neighbor_gpu lal_preprocessor.h lal_neighbor_gpu.cu $(OBJ_DIR)/neighbor_gpu_cl.h
+
+$(OBJ_DIR)/device_cl.h: lal_device.cu lal_preprocessor.h
+	$(BSH) ./geryon/file_to_cstr.sh device lal_preprocessor.h lal_device.cu $(OBJ_DIR)/device_cl.h
+
+$(OBJ_DIR)/%_cl.h: lal_%.cu $(PRE1_H)
+	$(BSH) ./geryon/file_to_cstr.sh $* $(PRE1_H) $< $@;
+
+# host code compilation
+
+$(OBJ_DIR)/lal_answer.o: lal_answer.cpp $(HOST_H)
+	$(SYCL) -o $@ -c lal_answer.cpp -I$(OBJ_DIR)
+
+$(OBJ_DIR)/lal_neighbor.o: lal_neighbor.cpp $(HOST_H)
+	$(SYCL) -o $@ -c lal_neighbor.cpp -I$(OBJ_DIR)
+
+$(OBJ_DIR)/lal_neighbor_shared.o: lal_neighbor_shared.cpp $(HOST_H)
+	$(SYCL) -o $@ -c lal_neighbor_shared.cpp -I$(OBJ_DIR)
+
+$(OBJ_DIR)/lal_%_ext.o: lal_%_ext.cpp lal_%.h $(HOST_H)
+	$(SYCL) -o $@ -c $< -I$(OBJ_DIR)
+
+$(OBJ_DIR)/lal_base_%.o: lal_base_%.cpp $(HOST_H)
+	$(SYCL) -o $@ -c $< -I$(OBJ_DIR)
+
+$(OBJ_DIR)/lal_%.o: lal_%.cpp %_cl.h $(HOST_H)
+	$(SYCL) -o $@ -c $< -I$(OBJ_DIR)
+
+$(BIN_DIR)/sycl_get_devices: ./geryon/ucl_get_devices.cpp $(SYCL_H)
+	$(SYCL) -o $@ ./geryon/ucl_get_devices.cpp -DUCL_SYCL $(SYCL_LINK)
+
+$(GPU_LIB): $(OBJS)
+	$(AR) -crusv $(GPU_LIB) $(OBJS)
+	@cp $(EXTRAMAKE) Makefile.lammps
+
+clean:
+	-rm -f $(EXECS) $(GPU_LIB) $(OBJS) $(KERS) *.linkinfo
+
+veryclean: clean
+	-rm -rf *~ *.linkinfo
+
+cleanlib:
+	-rm -f $(EXECS) $(GPU_LIB) $(OBJS) $(KERS) *.linkinfo

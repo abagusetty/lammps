@@ -7,7 +7,7 @@ set(GPU_SOURCES ${GPU_SOURCES_DIR}/gpu_extra.h
 target_compile_definitions(lammps PRIVATE -DLMP_GPU)
 
 set(GPU_API "opencl" CACHE STRING "API used by GPU package")
-set(GPU_API_VALUES opencl cuda hip)
+set(GPU_API_VALUES opencl cuda hip sycl)
 set_property(CACHE GPU_API PROPERTY STRINGS ${GPU_API_VALUES})
 validate_option(GPU_API GPU_API_VALUES)
 string(TOUPPER ${GPU_API} GPU_API)
@@ -176,7 +176,7 @@ elseif(GPU_API STREQUAL "OPENCL")
     ${LAMMPS_LIB_SOURCE_DIR}/gpu/lal_tersoff_zbl.cu
     ${LAMMPS_LIB_SOURCE_DIR}/gpu/lal_tersoff_mod.cu
   )
-
+  
   foreach(GPU_KERNEL ${GPU_LIB_CU})
       get_filename_component(basename ${GPU_KERNEL} NAME_WE)
       string(SUBSTRING ${basename} 4 -1 KERNEL_NAME)
@@ -414,6 +414,54 @@ elseif(GPU_API STREQUAL "HIP")
   endif()
 
   target_link_libraries(lammps PRIVATE gpu)
+
+elseif(GPU_API STREQUAL "SYCL")
+  option(SYCL_USE_DEVICE_SORT "Use GPU sorting" ON)
+
+  file(GLOB GPU_LIB_SYCL ${LAMMPS_LIB_SOURCE_DIR}/gpu/[^.]*_sycl.cpp ${CMAKE_CURRENT_SOURCE_DIR}/gpu/[^.]*_sycl.cpp)
+
+  foreach(SYCL_FILE ${GPU_LIB_SYCL})
+    # get_filename_component(SYCL_NAME ${SYCL_FILE} NAME_WE)
+    # string(REGEX REPLACE "^.*lal_" "" SYCL_NAME "${SYCL_NAME}")
+
+    # set(CU_CPP_FILE  "${LAMMPS_LIB_BINARY_DIR}/gpu/${SYCL_NAME}.cu.cpp")
+    # message(STATUS "CU_CPP_FILE........${CU_CPP_FILE}")
+    # set(CUBIN_FILE   "${LAMMPS_LIB_BINARY_DIR}/gpu/${SYCL_NAME}.cubin")
+    # message(STATUS "CUBIN_FILE........${CUBIN_FILE}")
+    # set(CUBIN_H_FILE "${LAMMPS_LIB_BINARY_DIR}/gpu/${SYCL_NAME}_cubin.h")
+    # message(STATUS "CUBIN_H_FILE........${CUBIN_H_FILE}")
+
+    # if(HIP_PLATFORM STREQUAL "hcc" OR HIP_PLATFORM STREQUAL "amd")
+    #     configure_file(${SYCL_FILE} ${CU_CPP_FILE} COPYONLY)
+
+    #     add_custom_command(OUTPUT ${CUBIN_FILE}
+    #     VERBATIM COMMAND ${HIP_HIPCC_EXECUTABLE} --genco --offload-arch=${HIP_ARCH} -O3 -ffast-math -DUSE_HIP -D_${GPU_PREC_SETTING} -DLAMMPS_${LAMMPS_SIZES} -I${LAMMPS_LIB_SOURCE_DIR}/gpu -o ${CUBIN_FILE} ${CU_CPP_FILE}
+    #     DEPENDS ${CU_CPP_FILE}
+    #     COMMENT "Generating ${SYCL_NAME}.cubin")
+    # endif()
+
+    # add_custom_command(OUTPUT ${CUBIN_H_FILE}
+    #   COMMAND ${CMAKE_COMMAND} -D SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR} -D VARNAME=${SYCL_NAME} -D HEADER_FILE=${CUBIN_H_FILE} -D SOURCE_FILE=${CUBIN_FILE} -P ${CMAKE_CURRENT_SOURCE_DIR}/Modules/GenerateBinaryHeader.cmake
+    #   DEPENDS ${CUBIN_FILE}
+    #   COMMENT "Generating ${SYCL_NAME}_cubin.h")
+
+    # list(APPEND GPU_LIB_SOURCES ${CUBIN_H_FILE})
+  endforeach()
+
+  add_library(gpu STATIC ${GPU_LIB_SOURCES})
+  target_include_directories(gpu PRIVATE ${LAMMPS_LIB_BINARY_DIR}/gpu)
+  target_compile_definitions(gpu PRIVATE -D_${GPU_PREC_SETTING} -DUSE_SYCL -DMPI_GERYON -DGERYON_NUMA_FISSION -DUCL_NO_EXIT)
+  #target_link_libraries(gpu PRIVATE hip::host)
+
+  if(SYCL_USE_DEVICE_SORT)
+    target_compile_definitions(gpu PRIVATE -DUSE_SYCL_DEVICE_SORT)
+  endif(SYCL_USE_DEVICE_SORT)
+
+  target_link_libraries(lammps PRIVATE gpu)
+
+  add_executable(sycl_get_devices ${LAMMPS_LIB_SOURCE_DIR}/gpu/geryon/ucl_get_devices.cpp)
+  target_compile_definitions(sycl_get_devices PRIVATE -DGERYON_NUMA_FISSION -DUCL_SYCL)
+
 endif()
 
 set_property(GLOBAL PROPERTY "GPU_SOURCES" "${GPU_SOURCES}")

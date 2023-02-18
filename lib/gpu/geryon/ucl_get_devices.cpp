@@ -1,5 +1,5 @@
 /***************************************************************************
-                              nvc_get_devices.h
+                             ucl_get_devices.cpp
                              -------------------
                                W. Michael Brown
 
@@ -24,6 +24,11 @@
 #ifdef UCL_OPENCL
 #include "ocl_device.h"
 using namespace ucl_opencl;
+#endif
+
+#ifdef UCL_SYCL
+#include "sycl_device.hpp"
+using namespace ucl_sycl;
 #endif
 
 #ifdef UCL_CUDADR

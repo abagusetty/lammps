@@ -32,9 +32,9 @@
 #define tagint int
 #endif
 #ifndef _DOUBLE_DOUBLE
-_texture( pos_tex,float4);
+_texture( pos_tex, float4);
 #else
-_texture_2d( pos_tex,int4);
+_texture_2d( pos_tex, int4);
 #endif
 
 #ifdef NV_KERNEL

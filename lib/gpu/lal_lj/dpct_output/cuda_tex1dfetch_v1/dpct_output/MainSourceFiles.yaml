@@ -1,0 +1,921 @@
+---
+MainSourceFile:  MainSrcFiles_placehold
+Replacements:
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          0
+    Length:          0
+    ReplacementText: "#include <CL/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          42
+    Length:          23
+    ReplacementText: "/*\nDPCT1059:2: SYCL only supports 4-channel image format. Adjust the code.\n*/\ndpct::image_wrapper<float, 1> tex1;"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          67
+    Length:          11
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          116
+    Length:          0
+    ReplacementText: ", sycl::nd_item<3> item_ct1,\n            dpct::image_accessor_ext<float, 1> tex1"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          141
+    Length:          10
+    ReplacementText: 'item_ct1.get_group(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          152
+    Length:          10
+    ReplacementText: 'item_ct1.get_local_range().get(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          165
+    Length:          11
+    ReplacementText: 'item_ct1.get_local_id(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          212
+    Length:          9
+    ReplacementText: 'item_ct1.get_group_range(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          222
+    Length:          10
+    ReplacementText: 'item_ct1.get_local_range().get(2)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          261
+    Length:          21
+    ReplacementText: 'tex1.read(i)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          329
+    Length:          0
+    ReplacementText: "\n    dpct::device_ext &dev_ct1 = dpct::get_current_device();\n    sycl::queue &q_ct1 = dev_ct1.default_queue();"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          456
+    Length:          11
+    ReplacementText: int
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          480
+    Length:          14
+    ReplacementText: 'dpct::device_info'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          503
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1027:3: The call to cudaSetDeviceFlags was replaced with 0 because DPC++ currently does not support setting flags for devices.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          512
+    Length:          33
+    ReplacementText: '0'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          548
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1003:4: Migrated API does not return error code. (*, 0) is inserted. You may need to rewrite this code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          557
+    Length:          19
+    ReplacementText: '(dpct::dev_mgr::instance().get_device'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          578
+    Length:          8
+    ReplacementText: ''
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          588
+    Length:          0
+    ReplacementText: '.get_device_info(props), 0)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          651
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1048:0: The original value cudaHostAllocMapped is not meaningful in the migrated code and was removed or replaced with 0. You may need to check the migrated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          717
+    Length:          19
+    ReplacementText: '0'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          740
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1003:5: Migrated API does not return error code. (*, 0) is inserted. You may need to rewrite this code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          749
+    Length:          56
+    ReplacementText: '(*((void **) &finDevice) = finHost'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          805
+    Length:          0
+    ReplacementText: ', 0)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          809
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1048:1: The original value cudaHostAllocMapped is not meaningful in the migrated code and was removed or replaced with 0. You may need to check the migrated code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          876
+    Length:          19
+    ReplacementText: '0'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          899
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1003:6: Migrated API does not return error code. (*, 0) is inserted. You may need to rewrite this code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          908
+    Length:          58
+    ReplacementText: '(*((void **) &foutDevice) = foutHost'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          966
+    Length:          0
+    ReplacementText: ', 0)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          1191
+    Length:          0
+    ReplacementText: "    /*\n    DPCT1003:7: Migrated API does not return error code. (*, 0) is inserted. You may need to rewrite this code.\n    */\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          1195
+    Length:          13
+    ReplacementText: '(sycl::free(p, q_ct1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          1208
+    Length:          0
+    ReplacementText: ', 0)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          1214
+    Length:          23
+    ReplacementText: 'sycl::free(finHost, q_ct1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Offset:          1243
+    Length:          24
+    ReplacementText: 'sycl::free(foutHost, q_ct1)'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+MainSourceFilesDigest:
+  - MainSourceFile:  '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+    Digest:          524e174d3b5bda0d3bb2b9a2f880215f
+DpctVersion:     2022.0.0
+MainHelperFileName: dpct
+USMLevel:        ''
+FeatureMap:
+  device.hpp:
+    dev_mgr:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     dev_mgr
+      SubFeatureMap:
+        dev_mgr_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     dev_mgr
+          SubFeatureMap:   {}
+        dev_mgr_2:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     dev_mgr
+          SubFeatureMap:   {}
+        dev_mgr_3:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     dev_mgr
+          SubFeatureMap:   {}
+        dev_mgr_4:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     dev_mgr
+          SubFeatureMap:   {}
+        dev_mgr_check_id:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'dev_mgr::check_id'
+          SubFeatureMap:   {}
+        dev_mgr_current_device:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'dev_mgr::current_device'
+          SubFeatureMap:   {}
+        dev_mgr_current_device_id:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'dev_mgr::current_device_id'
+          SubFeatureMap:   {}
+        dev_mgr_get_device:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'dev_mgr::get_device'
+          SubFeatureMap:   {}
+    device_ext:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     device_ext
+      SubFeatureMap:
+        device_ext_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     device_ext
+          SubFeatureMap:   {}
+        device_ext_2:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     device_ext
+          SubFeatureMap:   {}
+        device_ext_default_queue:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_ext::default_queue'
+          SubFeatureMap:   {}
+        device_ext_get_device_info_return_info:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_ext::get_device_info'
+          SubFeatureMap:   {}
+        device_ext_get_device_info_return_void:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_ext::get_device_info'
+          SubFeatureMap:   {}
+        device_ext_get_version:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_ext::get_version'
+          SubFeatureMap:   {}
+    device_info:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     device_info
+      SubFeatureMap:
+        device_info_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     device_info
+          SubFeatureMap:   {}
+        device_info_set_global_mem_size:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_global_mem_size'
+          SubFeatureMap:   {}
+        device_info_set_host_unified_memory:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_host_unified_memory'
+          SubFeatureMap:   {}
+        device_info_set_local_mem_size:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_local_mem_size'
+          SubFeatureMap:   {}
+        device_info_set_major_version:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_major_version'
+          SubFeatureMap:   {}
+        device_info_set_max_clock_frequency:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_max_clock_frequency'
+          SubFeatureMap:   {}
+        device_info_set_max_compute_units:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_max_compute_units'
+          SubFeatureMap:   {}
+        device_info_set_max_nd_range_size:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_max_nd_range_size'
+          SubFeatureMap:   {}
+        device_info_set_max_sub_group_size:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_max_sub_group_size'
+          SubFeatureMap:   {}
+        device_info_set_max_work_group_size:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_max_work_group_size'
+          SubFeatureMap:   {}
+        device_info_set_max_work_item_sizes:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_max_work_item_sizes'
+          SubFeatureMap:   {}
+        device_info_set_max_work_items_per_compute_unit:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_max_work_items_per_compute_unit'
+          SubFeatureMap:   {}
+        device_info_set_minor_version:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_minor_version'
+          SubFeatureMap:   {}
+        device_info_set_name:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'device_info::set_name'
+          SubFeatureMap:   {}
+    exception_handler:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     exception_handler
+      SubFeatureMap:   {}
+    get_current_device:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     get_current_device
+      SubFeatureMap:   {}
+    get_default_queue:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     get_default_queue
+      SubFeatureMap:   {}
+    get_tid:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     get_tid
+      SubFeatureMap:   {}
+  dpct.hpp:
+    non_local_include_dependency:
+      IsCalled:        true
+      CallerSrcFiles:
+        - ''
+      FeatureName:     ''
+      SubFeatureMap:   {}
+  image.hpp:
+    fetch_data:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     fetch_data
+      SubFeatureMap:   {}
+    image_accessor_ext:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_accessor_ext
+      SubFeatureMap:   {}
+    image_accessor_ext_forward_decl:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_accessor_ext
+      SubFeatureMap:   {}
+    image_channel:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_channel
+      SubFeatureMap:
+        image_channel_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_channel
+          SubFeatureMap:   {}
+        image_channel_2:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_channel
+          SubFeatureMap:   {}
+        image_channel_3:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_channel
+          SubFeatureMap:   {}
+        image_channel_create:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::create'
+          SubFeatureMap:   {}
+        image_channel_get_channel_order:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::get_channel_order'
+          SubFeatureMap:   {}
+        image_channel_get_channel_type:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::get_channel_type'
+          SubFeatureMap:   {}
+        image_channel_get_total_size:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::get_total_size'
+          SubFeatureMap:   {}
+        image_channel_set_channel_data_type:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::set_channel_data_type'
+          SubFeatureMap:   {}
+        image_channel_set_channel_num:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::set_channel_num'
+          SubFeatureMap:   {}
+        image_channel_set_channel_size:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::set_channel_size'
+          SubFeatureMap:   {}
+        image_channel_set_channel_type:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_channel::set_channel_type'
+          SubFeatureMap:   {}
+    image_channel_data_type:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_channel_data_type
+      SubFeatureMap:   {}
+    image_creator:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_creator
+      SubFeatureMap:   {}
+    image_creator_forward_decl:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_creator
+      SubFeatureMap:   {}
+    image_data:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_data
+      SubFeatureMap:
+        image_data_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_data
+          SubFeatureMap:   {}
+        image_data_get_channel:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::get_channel'
+          SubFeatureMap:   {}
+        image_data_get_data_ptr:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::get_data_ptr'
+          SubFeatureMap:   {}
+        image_data_get_data_type:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::get_data_type'
+          SubFeatureMap:   {}
+        image_data_get_pitch:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::get_pitch'
+          SubFeatureMap:   {}
+        image_data_get_x:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::get_x'
+          SubFeatureMap:   {}
+        image_data_get_y:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::get_y'
+          SubFeatureMap:   {}
+        image_data_set_channel:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::set_channel'
+          SubFeatureMap:   {}
+        image_data_set_data:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_data::set_data'
+          SubFeatureMap:   {}
+    image_data_type:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_data_type
+      SubFeatureMap:   {}
+    image_matrix:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_matrix
+      SubFeatureMap:
+        image_matrix_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_matrix
+          SubFeatureMap:   {}
+        image_matrix_2:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_matrix
+          SubFeatureMap:   {}
+        image_matrix_create_image_with_channel:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_matrix::create_image'
+          SubFeatureMap:   {}
+        image_matrix_get_channel:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_matrix::get_channel'
+          SubFeatureMap:   {}
+        image_matrix_get_range_T:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_matrix::get_range'
+          SubFeatureMap:   {}
+        image_matrix_set_range:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_matrix::set_range'
+          SubFeatureMap:   {}
+    image_matrix_p_alias:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_matrix_p
+      SubFeatureMap:   {}
+    image_trait:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_trait
+      SubFeatureMap:   {}
+    image_wrapper:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_wrapper
+      SubFeatureMap:
+        image_wrapper_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_wrapper
+          SubFeatureMap:   {}
+    image_wrapper_base:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     image_wrapper_base
+      SubFeatureMap:
+        image_wrapper_base_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     image_wrapper_base
+          SubFeatureMap:   {}
+        image_wrapper_base_set_channel:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'image_wrapper_base::set_channel'
+          SubFeatureMap:   {}
+    sampling_info:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     sampling_info
+      SubFeatureMap:
+        sampling_info_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     sampling_info
+          SubFeatureMap:   {}
+        sampling_info_2:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     sampling_info
+          SubFeatureMap:   {}
+  memory.hpp:
+    get_buffer_byte_t:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     get_buffer
+      SubFeatureMap:   {}
+    mem_mgr:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     mem_mgr
+      SubFeatureMap:
+        mem_mgr_1:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     mem_mgr
+          SubFeatureMap:   {}
+        mem_mgr_2:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     mem_mgr
+          SubFeatureMap:   {}
+        mem_mgr_get_map_iterator:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'mem_mgr::get_map_iterator'
+          SubFeatureMap:   {}
+        mem_mgr_is_device_ptr:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'mem_mgr::is_device_ptr'
+          SubFeatureMap:   {}
+        mem_mgr_translate_ptr:
+          IsCalled:        true
+          CallerSrcFiles:
+            - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+          FeatureName:     'mem_mgr::translate_ptr'
+          SubFeatureMap:   {}
+    typedef_buffer_t:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     buffer_t
+      SubFeatureMap:   {}
+    typedef_byte_t:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     byte_t
+      SubFeatureMap:   {}
+  util.hpp:
+    make_index_sequence:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_lj/dpct_output/cuda_tex1dfetch_v1/example.cu'
+      FeatureName:     make_index_sequence
+      SubFeatureMap:   {}
+CompileTargets:  {}
+OptionMap:
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           ''
+    Specified:       false
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  CustomHelperFileName:
+    Value:           dpct
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitClNamespace:
+    Value:           'false'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionFlag:
+    Value:           '4294967295'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

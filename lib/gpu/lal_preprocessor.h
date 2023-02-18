@@ -108,7 +108,7 @@
 // -------------------------------------------------------------------------
 
 #if defined(USE_SYCL)
-#include "lal_pre_sycl.h"
+#include "lal_pre_sycl.hpp"
 #endif
 
 // -------------------------------------------------------------------------
@@ -117,7 +117,7 @@
 
 // See lal_pre_ocl_config.h for OpenCL device configurations
 
-#if !defined(NV_KERNEL) && !defined(USE_HIP)
+#if !defined(NV_KERNEL) && !defined(USE_HIP) && !defined(USE_SYCL)
 
 #define USE_OPENCL
 
@@ -299,6 +299,56 @@
 //                  ARCHITECTURE INDEPENDENT DEFINITIONS
 // -------------------------------------------------------------------------
 
+#if defined(USE_SYCL)
+
+#ifdef _DOUBLE_DOUBLE
+#define numtyp double
+#define numtyp2 sycl::double2
+#define numtyp4 sycl::double4
+#define acctyp double
+#define acctyp2 sycl::double2
+#define acctyp4 sycl::double4
+#endif // #ifdef _DOUBLE_DOUBLE
+
+#ifdef _SINGLE_DOUBLE
+#define numtyp float
+#define numtyp2 sycl::float2
+#define numtyp4 sycl::float4
+#define acctyp double
+#define acctyp2 sycl::double2
+#define acctyp4 sycl::double4
+#endif // #ifdef _SINGLE_DOUBLE
+
+#ifndef numtyp
+#define numtyp float
+#define numtyp2 sycl::float2
+#define numtyp4 sycl::float4
+#define acctyp float
+#define acctyp2 sycl::float2
+#define acctyp4 sycl::float4
+#endif // #ifndef numtyp
+
+#define EWALD_F (numtyp)1.12837917
+#define EWALD_P (numtyp)0.3275911
+#define A1 (numtyp)0.254829592
+#define A2 (numtyp)-0.284496736
+#define A3 (numtyp)1.421413741
+#define A4 (numtyp)-1.453152027
+#define A5 (numtyp)1.061405429
+
+#define SBBITS 30
+#define NEIGHMASK 0x3FFFFFFF
+ucl_inline int sbmask(int j) { return j >> SBBITS & 3; };
+
+// default to 32-bit smallint and other ints, 64-bit bigint:
+// same as defined in src/lmptype.h
+#if !defined(LAMMPS_SMALLSMALL) && !defined(LAMMPS_BIGBIG) && \
+    !defined(LAMMPS_SMALLBIG)
+#define LAMMPS_SMALLBIG
+#endif
+
+#else // (not HAVE_SYCL)
+
 #ifdef _DOUBLE_DOUBLE
 #define numtyp double
 #define numtyp2 double2
@@ -344,3 +394,5 @@ ucl_inline int sbmask(int j) { return j >> SBBITS & 3; };
     !defined(LAMMPS_SMALLBIG)
 #define LAMMPS_SMALLBIG
 #endif
+
+#endif // defined(USE_SYCL)

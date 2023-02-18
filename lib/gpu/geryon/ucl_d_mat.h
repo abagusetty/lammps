@@ -21,7 +21,7 @@
    the Simplified BSD License.
    ----------------------------------------------------------------------- */
 
-// Only allow this file to be included by CUDA and OpenCL specific headers
+// Only allow this file to be included by CUDA, SYCL and OpenCL specific headers
 #ifdef _UCL_MAT_ALLOW
 
 /// 2D Matrix on device (can have extra column storage to get correct alignment)
@@ -412,6 +412,7 @@ class UCL_D_Mat : public UCL_BaseMat {
   #ifdef _UCL_DEVICE_PTR_MAT
   /// Returns an API specific device pointer
   /** - For OpenCL, returns a &cl_mem object
+    * - For SYCL, returns a void*
     * - For CUDA Driver, returns a &CUdeviceptr
     * - For CUDA-RT, returns void** **/
   inline device_ptr & cbegin() { return _array; }

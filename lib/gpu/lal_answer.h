@@ -31,6 +31,10 @@ using namespace ucl_cudart;
 #include "geryon/hip_timer.h"
 #include "geryon/hip_mat.h"
 using namespace ucl_hip;
+#elif defined(USE_SYCL)
+// #include "geryon/sycl_timer.h"
+// #include "geryon/sycl_mat.h"
+// using namespace ucl_sycl;
 #else
 #include "geryon/nvd_timer.h"
 #include "geryon/nvd_mat.h"

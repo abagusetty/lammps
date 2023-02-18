@@ -1,0 +1,114 @@
+---
+MainSourceFile:  '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/dpct_output/lal_preprocessor.h'
+Replacements:
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_preprocessor.h'
+    Offset:          4989
+    Length:          0
+    ReplacementText: "#include <CL/sycl.hpp>\n#include <dpct/dpct.hpp>\n"
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+  - FilePath:        '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_preprocessor.h'
+    Offset:          12409
+    Length:          7
+    ReplacementText: 'sycl::double4'
+    ConstantFlag:    ''
+    ConstantOffset:  0
+    InitStr:         ''
+    NewHostVarName:  ''
+    BlockLevelFormatFlag: false
+DpctVersion:     2022.1.0
+MainHelperFileName: dpct
+USMLevel:        ''
+FeatureMap:
+  dpct.hpp:
+    dpct_compatibility_temp:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     DPCT_COMPATIBILITY_TEMP
+      SubFeatureMap:   {}
+  util.hpp:
+    cast_double_to_int:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     cast_double_to_int
+      SubFeatureMap:   {}
+    cast_ints_to_double:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     cast_ints_to_double
+      SubFeatureMap:   {}
+    permute_sub_group_by_xor:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     permute_sub_group_by_xor
+      SubFeatureMap:   {}
+    select_from_sub_group:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     select_from_sub_group
+      SubFeatureMap:   {}
+    shift_sub_group_left:
+      IsCalled:        true
+      CallerSrcFiles:
+        - '/gpfs/jlse-fs0/users/abagusetty/lammps/lib/gpu/lal_neighbour_gpu/lal_pre_cuda_hip.h'
+      FeatureName:     shift_sub_group_left
+      SubFeatureMap:   {}
+CompileTargets:  {}
+OptionMap:
+  AsyncHandler:
+    Value:           'false'
+    Specified:       false
+  CommentsEnabled:
+    Value:           'false'
+    Specified:       false
+  CompilationsDir:
+    Value:           ''
+    Specified:       false
+  CtadEnabled:
+    Value:           'false'
+    Specified:       false
+  CustomHelperFileName:
+    Value:           dpct
+    Specified:       false
+  ExperimentalFlag:
+    Value:           '0'
+    Specified:       false
+  ExplicitClNamespace:
+    Value:           'false'
+    Specified:       false
+  ExplicitNamespace:
+    Value:           '20'
+    Specified:       false
+  ExtensionFlag:
+    Value:           '4294967295'
+    Specified:       false
+  NDRangeDim:
+    Value:           '3'
+    Specified:       false
+  NoDRYPattern:
+    Value:           'false'
+    Specified:       false
+  OptimizeMigration:
+    Value:           'false'
+    Specified:       false
+  ProcessAll:
+    Value:           'false'
+    Specified:       false
+  RuleFile:
+    Value:           ''
+    Specified:       false
+  SyclNamedLambda:
+    Value:           'false'
+    Specified:       false
+  UsmLevel:
+    Value:           '1'
+    Specified:       false
+...

@@ -401,6 +401,21 @@ void AtomT::sort_neighbor(const int num_atoms) {
       UCL_GERYON_EXIT;
     }
   #endif
+
+  #ifdef USE_SYCL_DEVICE_SORT
+    if(sort_out_size < num_atoms){
+      printf("AtomT::sort_neighbor: invalid temp buffer size\n");
+      UCL_GERYON_EXIT;
+    }
+    
+    if(hipSuccess != hipcub::DeviceRadixSort::SortPairs(sort_temp_storage, sort_temp_storage_size, (unsigned *)dev_cell_id.begin(), sort_out_keys, (int *)dev_particle_id.begin(), sort_out_values, num_atoms)){
+      printf("AtomT::sort_neighbor: DeviceRadixSort error\n");
+      UCL_GERYON_EXIT;
+    }
+    queue.copy<unsigned>(dev_cell_id.begin(), sort_out_keys, num_atoms).wait();
+    queue.copy<int>(dev_particle_id.begin(), sort_out_values, num_atoms).wait();    
+  #endif
+    
 }
 
 #ifdef GPU_CAST

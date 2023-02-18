@@ -16,50 +16,43 @@
 // ***************************************************************************
 
 #if defined(USE_SYCL)
+
 #include "lal_preprocessor.h"
+
 #ifdef LAMMPS_SMALLBIG
 #define tagint int
-#endif
+#endif // LAMMPS_SMALLBIG
+
 #ifdef LAMMPS_BIGBIG
-#ifdef USE_OPENCL
-#define tagint long
-#else
-#include "stdint.h"
 #define tagint int64_t
-#endif
-#endif
+#endif // LAMMPS_BIGBIG
+
 #ifdef LAMMPS_SMALLSMALL
 #define tagint int
-#endif
+#endif // LAMMPS_SMALLSMALL
+
 #ifndef _DOUBLE_DOUBLE
 dpct::image_wrapper<sycl::float4, 1> pos_tex;
 #else
+//ABB: may be, dpct::image_wrapper<sycl::int4, 2> pos_tex;
 _texture_2d( pos_tex,int4);
-#endif
+#endif // _DOUBLE_DOUBLE
 
-#ifdef NV_KERNEL
-#if (__CUDACC_VER_MAJOR__ == 11) && (__CUDACC_VER_MINOR__ >= 2)
-// Issue with incorrect results in CUDA >= 11.2
-#define LAL_USE_OLD_NEIGHBOR
-#endif
-#endif
-
-
-template <typename T, typename DIM>
+template <typename T, int DIM>
 using localAcc = sycl::accessor<T, DIM,
 				sycl::access_mode::read_write,
 				sycl::access::target::local>;
 
-void calc_cell_id(const numtyp4 * x_,
+void calc_cell_id(sycl::nd_item<3>& item,
+		  dpct::image_accessor_ext<sycl::float4, 1> pos_tex,
+		  const numtyp4 * x_,
 		  unsigned * cell_id,
 		  int * particle_id,
 		  numtyp boxlo0, numtyp boxlo1, numtyp boxlo2,
 		  numtyp i_cell_size, int ncellx, int ncelly,
 		  int ncellz, int inum, int nall,
-		  int cells_in_cutoff,
-		  sycl::nd_item<3>& item,
-		  dpct::image_accessor_ext<sycl::float4, 1> pos_tex) {
-  
+		  int cells_in_cutoff)
+{
   int i = item.get_global_id(2);
 
   if (i < nall) {
@@ -124,17 +117,22 @@ void kernel_calc_cell_counts(const unsigned * cell_id,
 }
 
 #else
+
 #define pos_tex x_
+
 #ifdef LAMMPS_SMALLBIG
 #define tagint int
 #endif
+
 #ifdef LAMMPS_BIGBIG
 #define tagint long
 #endif
+
 #ifdef LAMMPS_SMALLSMALL
 #define tagint int
 #endif
-#endif
+
+#endif // #if defined(USE_SYCL)
 
 void transpose(tagint * out,
 	       const tagint * in,
@@ -161,185 +159,21 @@ void transpose(tagint * out,
     out[j*rows_in+i] = block[ti][tj];
 }
 
-#ifndef LAL_USE_OLD_NEIGHBOR
-
-#define MAX_STENCIL_SIZE 25
-#if !defined(MAX_SUBGROUPS_PER_BLOCK)
-#define MAX_SUBGROUPS_PER_BLOCK 8
-#endif
-
-dpct::constant_memory<int, 1> bin_stencil(MAX_STENCIL_SIZE);
-
-void calc_neigh_list_cell(const numtyp4 * x_,
-			  const int * cell_particle_id,
-			  const int * cell_counts,
-			  int *nbor_list,
-			  int *host_nbor_list,
-			  int *host_numj,
-			  int neigh_bin_size, numtyp cutoff_neigh,
-			  int ncellx, int ncelly, int ncellz,
-			  int inum, int nt, int nall, int t_per_atom,
-			  int cells_in_cutoff,
-			  const int * cell_subgroup_counts,
-			  const int * subgroup2cell,
-			  int subgroup_count,
-			  int *not_used, int *error_flag,
-			  sycl::nd_item<3>& item, // additional params for SYCL
-			  int *bin_stencil, 
-			  localAcc<int,1>& local_begin, localAcc<int,1>& local_counts, // shared_mem
-			  dpct::image_accessor_ext<sycl::float4, 1> pos_tex)
-{
-  int tid = THREAD_ID_X;
-  int bsx = BLOCK_SIZE_X;
-
-  auto sg = item.get_sub_group();  
-  int simd_size = sg.get_local_range();
-  int subgroup_id_local = tid / simd_size;
-  int subgroup_id_global = BLOCK_ID_X * bsx / simd_size + subgroup_id_local;
-  int lane_id = tid % simd_size;
-
-  if (subgroup_id_global < subgroup_count) {
-    // identify own cell for subgroup (icell) and local atom (i) for the lane
-    int icell = subgroup2cell[subgroup_id_global];
-    int icell_end = cell_counts[icell+1];
-    int i = cell_counts[icell] + (subgroup_id_global -
-                                  cell_subgroup_counts[icell]) *
-      simd_size + lane_id;
-
-    // Get count of the number of iterations to finish all cells
-    const int bin_stencil_stride = cells_in_cutoff * 2 + 1;
-    const int bin_stencil_size = bin_stencil_stride * bin_stencil_stride;
-    int offset = 0;
-    int cell_count = 0, jcellyz, jcell_begin;
-    const int offset2 = subgroup_id_local * (MAX_STENCIL_SIZE+1);
-    const int niter = (bin_stencil_size - 1)/simd_size + 1;
-    int end_idx = simd_size;
-    for (int ni = 0; ni < niter; ni++) {
-      if (ni == niter - 1)
-        end_idx = bin_stencil_size - offset;
-      if (lane_id < end_idx) {
-        jcellyz = icell + bin_stencil[lane_id + offset];
-        jcell_begin = cell_counts[jcellyz - cells_in_cutoff];
-        local_begin[lane_id + offset2 + offset] = jcell_begin;
-	const int local_count = cell_counts[jcellyz + cells_in_cutoff + 1] -
-	  jcell_begin;
-	cell_count += local_count;
-        local_counts[lane_id + offset2 + offset] = local_count;
-      }
-      offset += simd_size;
-    }
-
-#pragma unroll
-    cell_count += sg.shuffle_xor(cell_count, s);
-    for (unsigned int s=simd_size/2; s>0; s>>=1)
-      cell_count += shfl_xor(cell_count, s, simd_size);
-
-    int num_iter = cell_count;
-    int remainder = num_iter % simd_size;
-    if (remainder == 0) remainder = simd_size;
-    if (num_iter) num_iter = (num_iter - 1) / simd_size + 1;
-
-    numtyp4 diff;
-    numtyp r2;
-
-    int pid_i = nall, lpid_j, stride;
-    numtyp4 atom_i, atom_j;
-    int cnt = 0;
-    int *neigh_counts, *neigh_list;
-
-    if (i < icell_end)
-      pid_i = cell_particle_id[i];
-
-    if (pid_i < nt) {
-      fetch4(atom_i,pid_i,pos_tex); //pos[i];
-    }
-
-    if (pid_i < inum) {
-      stride=inum;
-      neigh_counts=nbor_list+stride+pid_i;
-      neigh_list=neigh_counts+stride+pid_i*(t_per_atom-1);
-      stride=stride*t_per_atom-t_per_atom;
-      nbor_list[pid_i]=pid_i;
-    } else {
-      stride=0;
-      neigh_counts=host_numj+pid_i-inum;
-      neigh_list=host_nbor_list+(pid_i-inum)*neigh_bin_size;
-    }
-
-    // loop through neighbors
-    int bin_shift = 0;
-    int zy = -1;
-    int num_atom_cell = 0;
-    int cell_pos = lane_id;
-    end_idx = simd_size;
-    for (int ci = 0; ci < num_iter; ci++) {
-      cell_pos += simd_size;
-      while (cell_pos >= num_atom_cell && zy < bin_stencil_size) {
-        // Shift lane index into atom bins based on remainder from last bin
-        bin_shift += num_atom_cell % simd_size;
-        if (bin_shift >= simd_size) bin_shift -= simd_size;
-        cell_pos = lane_id - bin_shift;
-        if (cell_pos < 0) cell_pos += simd_size;
-        // Move to next bin
-        zy++;
-        jcell_begin = local_begin[offset2 + zy];
-        num_atom_cell = local_counts[offset2 + zy];
-      }
-
-      if (zy < bin_stencil_size) {
-        lpid_j =  cell_particle_id[jcell_begin + cell_pos];
-        fetch4(atom_j,lpid_j,pos_tex);
-      }
-
-      if (ci == num_iter-1) end_idx = remainder;
-
-      for (int j = 0; j < end_idx; j++) {
-	int pid_j = simd_broadcast_i(lpid_j, j, simd_size);
-#ifdef _DOUBLE_DOUBLE
-	diff.x = atom_i.x - simd_broadcast_d(atom_j.x, j, simd_size);
-	diff.y = atom_i.y - simd_broadcast_d(atom_j.y, j, simd_size);
-	diff.z = atom_i.z - simd_broadcast_d(atom_j.z, j, simd_size);
-#else
-	diff.x() = atom_i.x() - simd_broadcast_f(atom_j.x(), j, simd_size);
-	diff.y() = atom_i.y() - simd_broadcast_f(atom_j.y(), j, simd_size);
-	diff.z() = atom_i.z() - simd_broadcast_f(atom_j.z(), j, simd_size);
-#endif
-
-	r2 = diff.x() * diff.x() + diff.y() * diff.y() + diff.z() * diff.z();
-	//USE CUTOFFSQ?
-	if (r2 < cutoff_neigh*cutoff_neigh && pid_j != pid_i && pid_i < nt) {
-	  if (cnt < neigh_bin_size) {
-	    cnt++;
-	    *neigh_list = pid_j;
-	    neigh_list++;
-	    if ((cnt & (t_per_atom-1))==0)
-	      neigh_list=neigh_list+stride;
-	  } else
-	    *error_flag=1;
-	}
-      } // for j
-    } // for (ci)
-    if (pid_i < nt)
-      *neigh_counts = cnt;
-  } // if (subgroup_id_global < subgroup_count)
-}
-
-#else //LAL_USE_OLD_NEIGHBOR
-
-void calc_neigh_list_cell(const numtyp4 * x_,
-			  const int * cell_particle_id,
-			  const int * cell_counts,
-			  int *nbor_list,
-			  int *host_nbor_list,
-			  int *host_numj,
+//Defines LAL_USE_OLD_NEIGHBOR for SYCL
+void calc_neigh_list_cell(sycl::nd_item<3>& item, // additional params for SYCL
+			  sycl::local_ptr<int> cell_list_sh,
+			  sycl::local_ptr<numtype4> pos_sh,
+			  dpct::image_accessor_ext<sycl::float4, 1>& pos_tex,
+			  const sycl::device_ptr<numtyp4> x_,
+			  const sycl::device_ptr<int> cell_particle_id,
+			  const sycl::device_ptr<int> cell_counts,
+			  sycl::device_ptr<int> nbor_list,
+			  sycl::device_ptr<int> host_nbor_list,
+			  sycl::device_ptr<int> host_numj,
 			  int neigh_bin_size, numtyp cell_size,
 			  int ncellx, int ncelly, int ncellz,
 			  int inum, int nt, int nall, int t_per_atom,
-			  int cells_in_cutoff,
-			  sycl::nd_item<3>& item, // additional params for SYCL
-			  localAcc<int,1>& cell_list_sh, 
-			  localAcc<numtype4,1>& pos_sh,   // shared_mem
-			  dpct::image_accessor_ext<sycl::float4, 1> pos_tex)
+			  int cells_in_cutoff)
 {
   int tid = THREAD_ID_X;
   int ix = BLOCK_ID_X + cells_in_cutoff;
@@ -442,8 +276,6 @@ void calc_neigh_list_cell(const numtyp4 * x_,
   } // for (i)
 }
 
-#endif
-
 void kernel_special(int *dev_nbor,
 		    int *host_nbor_list,
 		    const int *host_numj,
@@ -452,7 +284,7 @@ void kernel_special(int *dev_nbor,
 		    const tagint * special,
 		    int inum, int nt, int max_nbors, int t_per_atom,
 		    sycl::nd_item<3>& item) {
-  
+
   int tid=THREAD_ID_X;
   int ii=fast_mul((int)BLOCK_ID_X,(int)(BLOCK_SIZE_X)/t_per_atom);
   ii += tid/t_per_atom;
