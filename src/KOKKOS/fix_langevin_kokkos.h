@@ -1,7 +1,7 @@
 /* -*- c++ -*- ----------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -45,11 +45,10 @@ namespace LAMMPS_NS {
     }
 
     KOKKOS_INLINE_FUNCTION
-    volatile s_FSUM& operator+=(const volatile s_FSUM &rhs) volatile {
+    void operator+=(const volatile s_FSUM &rhs) volatile {
       fx += rhs.fx;
       fy += rhs.fy;
       fz += rhs.fz;
-      return *this;
     }
   };
   typedef s_FSUM FSUM;
@@ -72,17 +71,17 @@ namespace LAMMPS_NS {
   class FixLangevinKokkos : public FixLangevin {
    public:
     FixLangevinKokkos(class LAMMPS *, int, char **);
-    ~FixLangevinKokkos();
+    ~FixLangevinKokkos() override;
 
     void cleanup_copy();
-    void init();
-    void initial_integrate(int);
-    void post_force(int);
-    void reset_dt();
-    void grow_arrays(int);
-    void copy_arrays(int i, int j, int delflag);
-    double compute_scalar();
-    void end_of_step();
+    void init() override;
+    void initial_integrate(int) override;
+    void post_force(int) override;
+    void reset_dt() override;
+    void grow_arrays(int) override;
+    void copy_arrays(int i, int j, int delflag) override;
+    double compute_scalar() override;
+    void end_of_step() override;
 
     KOKKOS_INLINE_FUNCTION
       void initial_integrate_item(int) const;
@@ -192,6 +191,20 @@ namespace LAMMPS_NS {
       }
 
       KOKKOS_INLINE_FUNCTION
+      static void init(value_type &update) {
+        update.fx = 0.0;
+        update.fy = 0.0;
+        update.fz = 0.0;
+      }
+      KOKKOS_INLINE_FUNCTION
+      static void join(value_type &update,
+                       const value_type &source) {
+        update.fx += source.fx;
+        update.fy += source.fy;
+        update.fz += source.fz;
+      }
+
+      KOKKOS_INLINE_FUNCTION
       static void init(volatile value_type &update) {
         update.fx = 0.0;
         update.fy = 0.0;
@@ -234,6 +247,15 @@ namespace LAMMPS_NS {
         energy += c.compute_energy_item(i);
       }
       KOKKOS_INLINE_FUNCTION
+      static void init(value_type &update) {
+        update = 0.0;
+      }
+      KOKKOS_INLINE_FUNCTION
+      static void join(value_type &update,
+                       const value_type &source) {
+        update += source;
+      }
+      KOKKOS_INLINE_FUNCTION
       static void init(volatile value_type &update) {
         update = 0.0;
       }
@@ -263,31 +285,3 @@ namespace LAMMPS_NS {
 #endif
 #endif
 
-/* ERROR/WARNING messages:
-
-E: Fix langevin omega is not yet implemented with kokkos
-
-This option is not yet available.
-
-E: Fix langevin angmom is not yet implemented with kokkos
-
-This option is not yet available.
-
-E: Cannot zero Langevin force of 0 atoms
-
-The group has zero atoms, so you cannot request its force
-be zeroed.
-
-E: Fix langevin variable returned negative temperature
-
-Self-explanatory.
-
-E: Fix langevin gjf with tbias is not yet implemented with kokkos
-
-This option is not yet available.
-
-W: Fix langevin gjf using random gaussians is not implemented with kokkos
-
-This will most likely cause errors in kinetic fluctuations.
-
-*/

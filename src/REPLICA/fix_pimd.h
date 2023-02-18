@@ -1,7 +1,7 @@
 /* -*- c++ -*- ----------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -27,29 +27,29 @@ namespace LAMMPS_NS {
 class FixPIMD : public Fix {
  public:
   FixPIMD(class LAMMPS *, int, char **);
-  virtual ~FixPIMD();
+  ~FixPIMD() override;
 
-  int setmask();
+  int setmask() override;
 
-  void init();
-  void setup(int);
-  void post_force(int);
-  void initial_integrate(int);
-  void final_integrate();
+  void init() override;
+  void setup(int) override;
+  void post_force(int) override;
+  void initial_integrate(int) override;
+  void final_integrate() override;
 
-  double memory_usage();
-  void grow_arrays(int);
-  void copy_arrays(int, int, int);
-  int pack_exchange(int, double *);
-  int unpack_exchange(int, double *);
-  int pack_restart(int, double *);
-  void unpack_restart(int, int);
-  int maxsize_restart();
-  int size_restart(int);
-  double compute_vector(int);
+  double memory_usage() override;
+  void grow_arrays(int) override;
+  void copy_arrays(int, int, int) override;
+  int pack_exchange(int, double *) override;
+  int unpack_exchange(int, double *) override;
+  int pack_restart(int, double *) override;
+  void unpack_restart(int, int) override;
+  int maxsize_restart() override;
+  int size_restart(int) override;
+  double compute_vector(int) override;
 
-  int pack_forward_comm(int, int *, double *, int, int *);
-  void unpack_forward_comm(int, int, double *);
+  int pack_forward_comm(int, int *, double *, int, int *) override;
+  void unpack_forward_comm(int, int, double *) override;
 
   int method;
   int np;
@@ -57,7 +57,7 @@ class FixPIMD : public Fix {
 
   /* ring-polymer model */
 
-  double omega_np, fbond, spring_energy, sp;
+  double omega_np, fbond, spring_energy, sp, virial;
   int x_last, x_next;
 
   void spring_force();

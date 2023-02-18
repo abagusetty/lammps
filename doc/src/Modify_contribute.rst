@@ -27,11 +27,10 @@ join the `LAMMPS developers on Slack <https://lammps.slack.com>`_.  This
 slack work space is by invitation only.  Thus for access, please send an
 e-mail to ``slack@lammps.org`` explaining what part of LAMMPS you are
 working on.  Only discussions related to LAMMPS development are
-tolerated in that work space, so this is **NOT** for people that look for
-help with compiling, installing, or using LAMMPS.  Please post a message
-to the `lammps-users mailing list <https://www.lammps.org/mail.html>`_
-or the `LAMMPS forum <https://www.lammps.org/forum.html>`_ for those
-purposes.
+tolerated in that work space, so this is **NOT** for people that look
+for help with compiling, installing, or using LAMMPS.  Please post a
+message to the `LAMMPS forum <https://www.lammps.org/forum.html>`_ for
+those purposes.
 
 Packages versus individual files
 --------------------------------
@@ -81,8 +80,8 @@ integrated via pull requests on GitHub and cannot be merged without
 passing the automated testing and an approving review by a LAMMPS core
 developer.  Thus before submitting your contribution, you should first
 make certain, that your added or modified code compiles and works
-correctly with the latest patch-level or development version of LAMMPS
-and contains all bug fixes from it.
+correctly with the latest development version of LAMMPS and contains all
+bug fixes from it.
 
 Once you have prepared everything, see the :doc:`LAMMPS GitHub Tutorial
 <Howto_github>` page for instructions on how to submit your changes or

@@ -2,7 +2,7 @@
 /* ----------------------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -319,7 +319,7 @@ void FixDeformKokkos::end_of_step()
     //  if (mask[i] & groupbit)
     //    domain->x2lamda(x[i],x[i]);
 
-    if (nrigid)
+    if (rfix.size() > 0)
       error->all(FLERR,"Cannot (yet) use rigid bodies with fix deform and Kokkos");
       //for (i = 0; i < nrigid; i++)
       //  modify->fix[rfix[i]]->deform(0);

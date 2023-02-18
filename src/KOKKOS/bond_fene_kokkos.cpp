@@ -2,7 +2,7 @@
 /* ----------------------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -190,9 +190,9 @@ void BondFENEKokkos<DeviceType>::operator()(TagBondFENECompute<NEWTON_BOND,EVFLA
 
   if (rlogarg < 0.1) {
     if (!d_warning_flag())
-      Kokkos::atomic_fetch_add(&d_warning_flag(),1);
+      d_warning_flag() = 1;
     if (rlogarg <= -3.0 && !d_error_flag())
-      Kokkos::atomic_fetch_add(&d_error_flag(),1);
+      d_error_flag() = 1;
     rlogarg = 0.1;
   }
 

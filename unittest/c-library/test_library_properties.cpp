@@ -3,6 +3,7 @@
 #include "lammps.h"
 #include "library.h"
 #include "lmptype.h"
+#include "platform.h"
 #include <string>
 
 #include "gmock/gmock.h"
@@ -14,6 +15,7 @@
 #define XSTR(val) #val
 
 using ::LAMMPS_NS::tagint;
+using ::LAMMPS_NS::platform::path_join;
 using ::testing::HasSubstr;
 using ::testing::StartsWith;
 using ::testing::StrEq;
@@ -23,7 +25,7 @@ protected:
     void *lmp;
     std::string INPUT_DIR = STRINGIFY(TEST_INPUT_FOLDER);
 
-    LibraryProperties() = default;
+    LibraryProperties()           = default;
     ~LibraryProperties() override = default;
 
     void SetUp() override
@@ -82,7 +84,7 @@ TEST_F(LibraryProperties, get_mpi_comm)
 TEST_F(LibraryProperties, natoms)
 {
     if (!lammps_has_style(lmp, "atom", "full")) GTEST_SKIP();
-    std::string input = INPUT_DIR + PATH_SEP + "in.fourmol";
+    std::string input = path_join(INPUT_DIR, "in.fourmol");
     if (!verbose) ::testing::internal::CaptureStdout();
     lammps_file(lmp, input.c_str());
     if (!verbose) ::testing::internal::GetCapturedStdout();
@@ -92,7 +94,7 @@ TEST_F(LibraryProperties, natoms)
 TEST_F(LibraryProperties, thermo)
 {
     if (!lammps_has_style(lmp, "atom", "full")) GTEST_SKIP();
-    std::string input = INPUT_DIR + PATH_SEP + "in.fourmol";
+    std::string input = path_join(INPUT_DIR, "in.fourmol");
     ::testing::internal::CaptureStdout();
     lammps_file(lmp, input.c_str());
     lammps_command(lmp, "run 2 post no");
@@ -108,7 +110,7 @@ TEST_F(LibraryProperties, thermo)
 TEST_F(LibraryProperties, box)
 {
     if (!lammps_has_style(lmp, "atom", "full")) GTEST_SKIP();
-    std::string input = INPUT_DIR + PATH_SEP + "in.fourmol";
+    std::string input = path_join(INPUT_DIR, "in.fourmol");
     ::testing::internal::CaptureStdout();
     lammps_file(lmp, input.c_str());
     lammps_command(lmp, "run 2 post no");
@@ -207,6 +209,10 @@ TEST_F(LibraryProperties, setting)
     lammps_command(lmp, "dimension 3");
     if (!verbose) ::testing::internal::GetCapturedStdout();
 
+    EXPECT_EQ(lammps_extract_setting(lmp, "kokkos_active"), 0);
+    EXPECT_EQ(lammps_extract_setting(lmp, "kokkos_nthreads"), 0);
+    EXPECT_EQ(lammps_extract_setting(lmp, "kokkos_ngpus"), 0);
+
     EXPECT_EQ(lammps_extract_setting(lmp, "world_size"), 1);
     EXPECT_EQ(lammps_extract_setting(lmp, "world_rank"), 0);
     EXPECT_EQ(lammps_extract_setting(lmp, "universe_size"), 1);
@@ -248,7 +254,7 @@ TEST_F(LibraryProperties, setting)
     EXPECT_EQ(lammps_extract_setting(lmp, "UNKNOWN"), -1);
 
     if (lammps_has_style(lmp, "atom", "full")) {
-        std::string input = INPUT_DIR + PATH_SEP + "in.fourmol";
+        std::string input = path_join(INPUT_DIR, "in.fourmol");
         if (!verbose) ::testing::internal::CaptureStdout();
         lammps_file(lmp, input.c_str());
         lammps_command(lmp, "run 2 post no");
@@ -289,7 +295,7 @@ TEST_F(LibraryProperties, global)
 {
     if (!lammps_has_style(lmp, "atom", "full")) GTEST_SKIP();
 
-    std::string input = INPUT_DIR + PATH_SEP + "in.fourmol";
+    std::string input = path_join(INPUT_DIR, "in.fourmol");
     if (!verbose) ::testing::internal::CaptureStdout();
     lammps_file(lmp, input.c_str());
     lammps_command(lmp, "run 2 post no");
@@ -432,12 +438,41 @@ TEST_F(LibraryProperties, neighlist)
     }
 };
 
+TEST_F(LibraryProperties, has_error)
+{
+    // need errors to throw exceptions to be able to intercept them.
+    if (!lammps_config_has_exceptions()) GTEST_SKIP();
+
+    EXPECT_EQ(lammps_has_error(lmp), 0);
+
+    // trigger an error, but hide output
+    ::testing::internal::CaptureStdout();
+    lammps_command(lmp, "this_is_not_a_known_command");
+    ::testing::internal::GetCapturedStdout();
+
+    EXPECT_EQ(lammps_has_error(lmp), 1);
+
+    // retrieve error message
+    char errmsg[1024];
+    int err = lammps_get_last_error_message(lmp, errmsg, 1024);
+    EXPECT_EQ(err, 1);
+    EXPECT_THAT(errmsg, HasSubstr("ERROR: Unknown command: this_is_not_a_known_command"));
+
+    // retrieving the error message clear the error status
+    EXPECT_EQ(lammps_has_error(lmp), 0);
+    err = lammps_get_last_error_message(lmp, errmsg, 1024);
+    EXPECT_EQ(err, 0);
+    EXPECT_THAT(errmsg, StrEq(""));
+};
+
 class AtomProperties : public ::testing::Test {
 protected:
     void *lmp;
 
-    AtomProperties()= default;;
-    ~AtomProperties() override= default;;
+    AtomProperties() = default;
+    ;
+    ~AtomProperties() override = default;
+    ;
 
     void SetUp() override
     {
@@ -513,4 +548,28 @@ TEST_F(AtomProperties, position)
     EXPECT_DOUBLE_EQ(x[1][0], 0.2);
     EXPECT_DOUBLE_EQ(x[1][1], 0.1);
     EXPECT_DOUBLE_EQ(x[1][2], 0.1);
+}
+
+TEST(SystemSettings, kokkos)
+{
+    if (!lammps_config_has_package("KOKKOS")) GTEST_SKIP();
+    if (!lammps_config_accelerator("KOKKOS", "api", "openmp")) GTEST_SKIP();
+
+    // clang-format off
+    const char *args[] = {"SystemSettings", "-log", "none", "-echo", "screen", "-nocite",
+                          "-k", "on", "t", "4", "-sf", "kk"};
+    // clang-format on
+    char **argv = (char **)args;
+    int argc    = sizeof(args) / sizeof(char *);
+
+    ::testing::internal::CaptureStdout();
+    void *lmp          = lammps_open_no_mpi(argc, argv, nullptr);
+    std::string output = ::testing::internal::GetCapturedStdout();
+    if (verbose) std::cout << output;
+    EXPECT_THAT(output, StartsWith("LAMMPS ("));
+
+    EXPECT_EQ(lammps_extract_setting(lmp, "kokkos_active"), 1);
+    EXPECT_EQ(lammps_extract_setting(lmp, "kokkos_nthreads"), 4);
+    EXPECT_EQ(lammps_extract_setting(lmp, "kokkos_ngpus"), 0);
+    lammps_close(lmp);
 }

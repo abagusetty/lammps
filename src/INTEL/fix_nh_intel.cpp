@@ -2,7 +2,7 @@
 /* ----------------------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -22,6 +22,7 @@
 #include "domain.h"
 #include "error.h"
 #include "force.h"
+#include "intel_preprocess.h"
 #include "memory.h"
 #include "modify.h"
 #include "neighbor.h"
@@ -46,15 +47,9 @@ typedef struct { double x,y,z; } dbl3_t;
 FixNHIntel::FixNHIntel(LAMMPS *lmp, int narg, char **arg) :
   FixNH(lmp, narg, arg)
 {
-  _dtfm = 0;
+  _dtfm = nullptr;
   _nlocal3 = 0;
   _nlocal_max = 0;
-}
-
-/* ---------------------------------------------------------------------- */
-
-FixNHIntel::~FixNHIntel()
-{
 }
 
 /* ---------------------------------------------------------------------- */
@@ -76,7 +71,7 @@ void FixNHIntel::remap()
   double oldlo,oldhi;
   double expfac;
 
-  dbl3_t * _noalias const x = (dbl3_t *) atom->x[0];
+  auto * _noalias const x = (dbl3_t *) atom->x[0];
   int *mask = atom->mask;
   int nlocal = atom->nlocal;
   double *h = domain->h;
@@ -106,6 +101,7 @@ void FixNHIntel::remap()
     #pragma vector aligned
     #endif
     for (int i = 0; i < nlocal; i++) {
+      i = IP_PRE_dword_index(i);
       const double d0 = x[i].x - b0;
       const double d1 = x[i].y - b1;
       const double d2 = x[i].z - b2;
@@ -124,6 +120,7 @@ void FixNHIntel::remap()
     #endif
     for (int i = 0; i < nlocal; i++) {
       if (mask[i] & dilate_group_bit) {
+        i = IP_PRE_dword_index(i);
         const double d0 = x[i].x - b0;
         const double d1 = x[i].y - b1;
         const double d2 = x[i].z - b2;
@@ -293,6 +290,7 @@ void FixNHIntel::remap()
     #pragma vector aligned
     #endif
     for (int i = 0; i < nlocal; i++) {
+      i = IP_PRE_dword_index(i);
       x[i].x = h0*x[i].x + h5*x[i].y + h4*x[i].z + nb0;
       x[i].y = h1*x[i].y + h3*x[i].z + nb1;
       x[i].z = h2*x[i].z + nb2;
@@ -308,6 +306,7 @@ void FixNHIntel::remap()
     #endif
     for (int i = 0; i < nlocal; i++) {
       if (mask[i] & dilate_group_bit) {
+        i = IP_PRE_dword_index(i);
         x[i].x = h0*x[i].x + h5*x[i].y + h4*x[i].z + nb0;
         x[i].y = h1*x[i].y + h3*x[i].z + nb1;
         x[i].z = h2*x[i].z + nb2;
@@ -416,7 +415,7 @@ void FixNHIntel::nh_v_press()
     return;
   }
 
-  dbl3_t * _noalias const v = (dbl3_t *)atom->v[0];
+  auto * _noalias const v = (dbl3_t *)atom->v[0];
   int *mask = atom->mask;
   int nlocal = atom->nlocal;
   if (igroup == atom->firstgroup) nlocal = atom->nfirst;
@@ -438,6 +437,7 @@ void FixNHIntel::nh_v_press()
     #pragma vector aligned
     #endif
     for (int i = 0; i < nlocal; i++) {
+      i = IP_PRE_dword_index(i);
       v[i].x *= f0;
       v[i].y *= f1;
       v[i].z *= f2;
@@ -453,6 +453,7 @@ void FixNHIntel::nh_v_press()
     #endif
     for (int i = 0; i < nlocal; i++) {
       if (mask[i] & groupbit) {
+        i = IP_PRE_dword_index(i);
         v[i].x *= f0;
         v[i].y *= f1;
         v[i].z *= f2;
