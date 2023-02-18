@@ -2,7 +2,7 @@
 /* ----------------------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -332,7 +332,7 @@ void ComputeVoronoi::buildCells()
     input->variable->compute_atom(radvar,0,rfield,1,0);
 
     // communicate values to ghost atoms of neighboring nodes
-    comm->forward_comm_compute(this);
+    comm->forward_comm(this);
 
     // polydisperse voro++ container
     delete con_poly;

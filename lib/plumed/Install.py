@@ -10,14 +10,14 @@ import sys, os, platform, subprocess, shutil
 from argparse import ArgumentParser
 
 sys.path.append('..')
-from install_helpers import get_cpus, fullpath, geturl, checkmd5sum
+from install_helpers import get_cpus, fullpath, geturl, checkmd5sum, getfallback
 
 parser = ArgumentParser(prog='Install.py',
                         description="LAMMPS library build wrapper script")
 
 # settings
 
-version = "2.7.1"
+version = "2.8.1"
 mode = "static"
 
 # help message
@@ -51,9 +51,16 @@ checksums = { \
         '2.6.0' : '204d2edae58d9b10ba3ad460cad64191', \
         '2.6.1' : '89a9a450fc6025299fe16af235957163', \
         '2.6.3' : 'a9f8028fd74528c2024781ea1fdefeee', \
+        '2.6.5' : 'b67356f027e5c2747823b0422c3b0ec2', \
+        '2.6.6' : '6b470dcdce04c221ea42d8500b03c49b', \
         '2.7.0' : '95f29dd0c067577f11972ff90dfc7d12', \
         '2.7.1' : '4eac6a462ec84dfe0cec96c82421b8e8', \
         '2.7.2' : 'cfa0b4dd90a81c25d3302e8d97bfeaea', \
+        '2.7.3' : 'f00cc82edfefe6bb3df934911dbe32fb', \
+        '2.7.4' : 'f858e0b6aed173748fc85b6bc8a9dcb3', \
+        '2.7.5' : '2aca1986d6c1ca3ba7e9eb51b1102792', \
+        '2.8.0' : '489b23daba70da78cf0506cbc31689c6', \
+        '2.8.1' : '6bfe72ebdae63dc38a9ca27d9b0e08f8', \
         }
 
 # parse and process arguments
@@ -79,6 +86,7 @@ buildflag = args.build
 pathflag = args.path is not None
 plumedpath = args.path
 mode = args.mode
+version = args.version
 
 homepath = fullpath('.')
 homedir = "%s/plumed2" % (homepath)
@@ -94,14 +102,21 @@ if pathflag:
 
 if buildflag:
   url = "https://github.com/plumed/plumed2/releases/download/v%s/plumed-src-%s.tgz" % (version, version)
-  filename = "plumed-src-%s.tar.gz" %version
+  filename = "plumed-src-%s.tar.gz" % version
+  fallback = getfallback('plumed', url)
   print("Downloading plumed  ...")
-  geturl(url, filename)
+  try:
+    geturl(url, filename)
+  except:
+    geturl(fallback, filename)
 
   # verify downloaded archive integrity via md5 checksum, if known.
   if version in checksums:
     if not checkmd5sum(checksums[version], filename):
-      sys.exit("Checksum for plumed2 library does not match")
+      print("Checksum did not match. Trying fallback URL", fallback)
+      geturl(fallback, filename)
+      if not checkmd5sum(checksums[version], filename):
+        sys.exit("Checksum for plumed2 library does not match for fallback, too.")
 
   print("Unpacking plumed2 source tarball ...")
   if os.path.exists("%s/plumed-%s" % (homepath, version)):

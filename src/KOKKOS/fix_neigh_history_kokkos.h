@@ -1,7 +1,7 @@
 /* -*- c++ -*- ----------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -31,17 +31,17 @@ template <class DeviceType>
 class FixNeighHistoryKokkos : public FixNeighHistory {
  public:
   FixNeighHistoryKokkos(class LAMMPS *, int, char **);
-  ~FixNeighHistoryKokkos();
+  ~FixNeighHistoryKokkos() override;
 
-  void init();
-  void pre_exchange();
-  void setup_post_neighbor();
-  virtual void post_neighbor();
-  double memory_usage();
-  void grow_arrays(int);
-  void copy_arrays(int, int, int);
-  int pack_exchange(int, double *);
-  int unpack_exchange(int, double *);
+  void init() override;
+  void pre_exchange() override;
+  void setup_post_neighbor() override;
+  void post_neighbor() override;
+  double memory_usage() override;
+  void grow_arrays(int) override;
+  void copy_arrays(int, int, int) override;
+  int pack_exchange(int, double *) override;
+  int unpack_exchange(int, double *) override;
 
   KOKKOS_INLINE_FUNCTION
   void zero_partner_count_item(const int &i) const;

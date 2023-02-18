@@ -1,13 +1,14 @@
 Overview
 ========
 
-The best way to add a new feature to LAMMPS is to find a similar
-feature and look at the corresponding source and header files to figure
-out what it does.  You will need some knowledge of C++ to be able to
-understand the high-level structure of LAMMPS and its class
-organization, but functions (class methods) that do actual
-computations are written in vanilla C-style code and operate on simple
-C-style data structures (vectors and arrays).
+The best way to add a new feature to LAMMPS is to find a similar feature
+and look at the corresponding source and header files to figure out what
+it does.  You will need some knowledge of C++ to be able to understand
+the high-level structure of LAMMPS and its class organization, but
+functions (class methods) that do actual computations are mostly written
+in C-style code and operate on simple C-style data structures (vectors
+and arrays).  A high-level overview of the programming style choices in
+LAMMPS is :doc:`given elsewhere <Developer_code_design>`.
 
 Most of the new features described on the :doc:`Modify <Modify>` doc
 page require you to write a new C++ derived class (except for exceptions
@@ -57,14 +58,6 @@ When you re-build LAMMPS, your new pairwise potential becomes part of
 the executable and can be invoked with a pair_style command like the
 example above.  Arguments like 0.1 and 3.5 can be defined and
 processed by your new class.
-
-.. note::
-
-   With the traditional make process, simply adding the new files to the
-   src folder and compiling LAMMPS again for the desired configuration
-   with "make machine" is sufficient.  When using CMake, you need to
-   re-run CMake with "cmake ." in the build folder to have it recognize
-   the added files and include them into the build system.
 
 As illustrated by this example pair style, many kinds of options are
 referred to in the LAMMPS documentation as the "style" of a particular

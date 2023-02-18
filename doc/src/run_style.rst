@@ -67,7 +67,8 @@ Description
 Choose the style of time integrator used for molecular dynamics
 simulations performed by LAMMPS.
 
-The *verlet* style is a standard velocity-Verlet integrator.
+The *verlet* style is the velocity form of the
+Stoermer-Verlet time integration algorithm (velocity-Verlet)
 
 ----------
 
@@ -89,7 +90,7 @@ in its 3d FFTs.  In this scenario, splitting your P total processors
 into 2 subsets of processors, P1 in the first partition and P2 in the
 second partition, can enable your simulation to run faster.  This is
 because the long-range forces in PPPM can be calculated at the same
-time as pair-wise and bonded forces are being calculated, and the FFTs
+time as pairwise and bonded forces are being calculated, and the FFTs
 can actually speed up when running on fewer processors.
 
 To use this style, you must define 2 partitions where P1 is a multiple
@@ -100,7 +101,7 @@ Py2 by Pz2, then Px1 must be an integer multiple of Px2, and similarly
 for Py1 a multiple of Py2, and Pz1 a multiple of Pz2.
 
 Typically the best way to do this is to let the first partition choose
-its onn optimal layout, then require the second partition's layout to
+its own optimal layout, then require the second partition's layout to
 match the integer multiple constraint.  See the
 :doc:`processors <processors>` command with its *part* keyword for a way
 to control this, e.g.
@@ -202,7 +203,7 @@ operates on pair style computations, it is mutually exclusive with
 either the *pair* or the *inner*\ /\ *middle*\ /\ *outer* keywords.
 
 When using rRESPA (or for any MD simulation) care must be taken to
-choose a timestep size(s) that insures the Hamiltonian for the chosen
+choose a timestep size(s) that ensures the Hamiltonian for the chosen
 ensemble is conserved.  For the constant NVE ensemble, total energy
 must be conserved.  Unfortunately, it is difficult to know *a priori*
 how well energy will be conserved, and a fairly long test simulation
@@ -220,7 +221,7 @@ impropers, and dihedrals can be computed on this innermost 0.5 fs
 step.  The outermost timestep cannot be greater than 4.0 fs without
 risking energy drift.  Smooth switching of forces between the levels
 of the rRESPA hierarchy is also necessary to avoid drift, and a 1-2
-angstrom "healing distance" (the distance between the outer and inner
+Angstrom "healing distance" (the distance between the outer and inner
 cutoffs) works reasonably well.  We thus recommend the following
 settings for use of the *respa* style without SHAKE in biomolecular
 simulations:
@@ -276,7 +277,7 @@ Even a LJ system can benefit from rRESPA if the interactions are
 divided by the inner, middle and outer keywords.  A 2-fold or more
 speedup can be obtained while maintaining good energy conservation.
 In real units, for a pure LJ fluid at liquid density, with a sigma of
-3.0 angstroms, and epsilon of 0.1 Kcal/mol, the following settings
+3.0 Angstroms, and epsilon of 0.1 kcal/mol, the following settings
 seem to work well:
 
 .. code-block:: LAMMPS
