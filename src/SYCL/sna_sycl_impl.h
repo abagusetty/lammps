@@ -81,7 +81,7 @@ SNAKokkos<DeviceType, real_type, vector_length>::SNAKokkos(real_type rfac0_in,
 /* ---------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 SNAKokkos<DeviceType, real_type, vector_length>::~SNAKokkos()
 {
 }
@@ -361,7 +361,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::grow_rij(int newnatom, int
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_cayley_klein(const int& iatom_mod, const int& jnbor, const int& iatom_div)
 {
   const int iatom = iatom_mod + vector_length * iatom_div;
@@ -448,7 +448,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_cayley_klein(const
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::pre_ui(const int& iatom_mod, const int& j, const int& ielem, const int& iatom_div)
 {
 
@@ -482,7 +482,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::pre_ui(const int& iatom_mo
 // Version of the code that exposes additional parallelism by threading over `j_bend` values
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_ui_small(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int iatom_mod, const int j_bend, const int jnbor, const int iatom_div)
 {
 
@@ -513,7 +513,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_ui_small(const typ
 // Version of the code that loops over all `j_bend` values which reduces integer arithmetic
 // and some amount of load imbalance, at the expense of reducing parallelism
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_ui_large(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int iatom_mod, const int jnbor, const int iatom_div)
 {
   // get shared memory offset
@@ -652,7 +652,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::evaluate_ui_jbend(const Wi
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_zi(const int& iatom_mod, const int& jjz, const int& iatom_div)
 {
 
@@ -687,7 +687,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_zi(const int& iato
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_bi(const int& iatom_mod, const int& jjb, const int& iatom_div)
 {
   // for j1 = 0,...,twojmax
@@ -780,7 +780,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_bi(const int& iato
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_yi(int iatom_mod, int jjz, int iatom_div,
  const Kokkos::View<real_type***, Kokkos::LayoutLeft, DeviceType> &beta_pack)
 {
@@ -829,7 +829,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_yi(int iatom_mod, 
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_yi_with_zlist(int iatom_mod, int jjz, int iatom_div,
  const Kokkos::View<real_type***, Kokkos::LayoutLeft, DeviceType> &beta_pack)
 {
@@ -955,7 +955,7 @@ typename SNAKokkos<DeviceType, real_type, vector_length>::real_type SNAKokkos<De
 // Version of the code that exposes additional parallelism by threading over `j_bend` values
 template<class DeviceType, typename real_type, int vector_length>
 template<int dir>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_fused_deidrj_small(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int iatom_mod, const int j_bend, const int jnbor, const int iatom_div)
 {
   // get shared memory offset
@@ -992,7 +992,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_fused_deidrj_small
 // and some amount of load imbalance, at the expense of reducing parallelism
 template<class DeviceType, typename real_type, int vector_length>
 template<int dir>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_fused_deidrj_large(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int iatom_mod, const int jnbor, const int iatom_div)
 {
   // get shared memory offset
@@ -1182,7 +1182,7 @@ typename SNAKokkos<DeviceType, real_type, vector_length>::real_type SNAKokkos<De
  * ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::pre_ui_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int& iatom, const int& ielem)
 {
   for (int jelem = 0; jelem < nelements; jelem++) {
@@ -1216,7 +1216,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::pre_ui_cpu(const typename 
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_ui_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int iatom, int jnbor)
 {
   real_type rsq, r, x, y, z, z0, theta0;
@@ -1246,7 +1246,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_ui_cpu(const typen
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_zi_cpu(const int& iter)
 {
   const int iatom = iter / idxz_max;
@@ -1316,7 +1316,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_zi_cpu(const int& 
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_bi_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int iatom)
 {
   // for j1 = 0,...,twojmax
@@ -1414,7 +1414,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_bi_cpu(const typen
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_yi_cpu(int iter,
  const Kokkos::View<real_type**, DeviceType> &beta)
 {
@@ -1523,7 +1523,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_yi_cpu(int iter,
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_duidrj_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int iatom, int jnbor)
 {
   real_type rsq, r, x, y, z, z0, theta0, cs, sn;
@@ -1555,7 +1555,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_duidrj_cpu(const t
 
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_deidrj_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int iatom, int jnbor)
 {
   t_scalar3<real_type> final_sum;
@@ -1621,7 +1621,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_deidrj_cpu(const t
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::add_uarraytot(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int iatom, int jnbor,
                                           const real_type& r, const real_type& wj, const real_type& rcut, int jelem)
 {
@@ -1651,7 +1651,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::add_uarraytot(const typena
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_uarray_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int iatom, int jnbor,
                          const real_type& x, const real_type& y, const real_type& z, const real_type& z0, const real_type& r)
 {
@@ -1742,7 +1742,7 @@ void SNAKokkos<DeviceType, real_type, vector_length>::compute_uarray_cpu(const t
 ------------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_duarray_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int iatom, int jnbor,
                           const real_type& x, const real_type& y, const real_type& z,
                           const real_type& z0, const real_type& r, const real_type& dz0dr,
@@ -2223,7 +2223,7 @@ int SNAKokkos<DeviceType, real_type, vector_length>::compute_ncoeff()
 /* ---------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 real_type SNAKokkos<DeviceType, real_type, vector_length>::compute_sfac(real_type r, real_type rcut)
 {
   constexpr real_type one = static_cast<real_type>(1.0);
@@ -2244,7 +2244,7 @@ real_type SNAKokkos<DeviceType, real_type, vector_length>::compute_sfac(real_typ
 /* ---------------------------------------------------------------------- */
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 real_type SNAKokkos<DeviceType, real_type, vector_length>::compute_dsfac(real_type r, real_type rcut)
 {
   constexpr real_type zero = static_cast<real_type>(0.0);
@@ -2262,7 +2262,7 @@ real_type SNAKokkos<DeviceType, real_type, vector_length>::compute_dsfac(real_ty
 }
 
 template<class DeviceType, typename real_type, int vector_length>
-KOKKOS_INLINE_FUNCTION
+__attribute__((always_inline))
 void SNAKokkos<DeviceType, real_type, vector_length>::compute_s_dsfac(const real_type r, const real_type rcut, real_type& sfac, real_type& dsfac) {
   constexpr real_type one = static_cast<real_type>(1.0);
   constexpr real_type zero = static_cast<real_type>(0.0);
