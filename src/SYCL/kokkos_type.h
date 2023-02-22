@@ -2,7 +2,7 @@
 /* -*- c++ -*- ----------------------------------------------------------
    LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
    https://www.lammps.org/, Sandia National Laboratories
-   Steve Plimpton, sjplimp@sandia.gov
+   LAMMPS development team: developers@lammps.org
 
    Copyright (2003) Sandia Corporation.  Under the terms of Contract
    DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
@@ -12,35 +12,39 @@
    See the README file in the top-level LAMMPS directory.
 ------------------------------------------------------------------------- */
 
-#ifndef LMP_LMPTYPE_SYCL_H
-#define LMP_LMPTYPE_SYCL_H
+#ifndef LMP_LMPTYPE_KOKKOS_H
+#define LMP_LMPTYPE_KOKKOS_H
 
 #include "pointers.h"
 #include "lmptype.h"
 
-#include <sycl/sycl.hpp>
+#include <Kokkos_Core.hpp>
+#include <Kokkos_DualView.hpp>
+#include <Kokkos_Timer.hpp>
+#include <Kokkos_ScatterView.hpp>
+#include <Kokkos_UnorderedMap.hpp>
 
 constexpr int FULL = 1;
 constexpr int HALFTHREAD = 2;
 constexpr int HALF = 4;
 
-#if defined(SYCL_ENABLE_CXX11)
+#if defined(KOKKOS_ENABLE_CXX11)
 #undef ISFINITE
-#define ISFINITE(x) sycl::isfinite(x)
+#define ISFINITE(x) std::isfinite(x)
 #endif
 
-#if defined(SYCL_ENABLE_CUDA) || defined(SYCL_ENABLE_HIP) || defined(SYCL_ENABLE_SYCL)
-#define LMP_SYCL_GPU
+#if defined(KOKKOS_ENABLE_CUDA) || defined(KOKKOS_ENABLE_HIP) || defined(KOKKOS_ENABLE_SYCL) || defined(KOKKOS_ENABLE_OPENMPTARGET)
+#define LMP_KOKKOS_GPU
 #endif
 
-#if defined(LMP_SYCL_GPU)
-#define SYCL_GPU_ARG(x) x
+#if defined(LMP_KOKKOS_GPU)
+#define KOKKOS_GPU_ARG(x) x
 #else
-#define SYCL_GPU_ARG(x)
+#define KOKKOS_GPU_ARG(x)
 #endif
 
 #define MAX_TYPES_STACKPARAMS 12
-static constexpr LAMMPS_NS::bigint LMP_SYCL_AV_DELTA = 10;
+static constexpr LAMMPS_NS::bigint LMP_KOKKOS_AV_DELTA = 10;
 
 namespace Kokkos {
   static auto NoInit = [](std::string const& label) {
@@ -48,8 +52,217 @@ namespace Kokkos {
   };
 }
 
-template<class Scalar_type>
-using t_scalar3 = sycl::vec<Scalar_type, 3>;
+  struct lmp_float3 {
+    float x,y,z;
+    KOKKOS_INLINE_FUNCTION
+    lmp_float3():x(0.0f),y(0.0f),z(0.0f) {}
+
+    KOKKOS_INLINE_FUNCTION
+    void operator += (const lmp_float3& tmp) {
+      x+=tmp.x;
+      y+=tmp.y;
+      z+=tmp.z;
+    }
+    KOKKOS_INLINE_FUNCTION
+    void operator += (const lmp_float3& tmp) volatile {
+      x+=tmp.x;
+      y+=tmp.y;
+      z+=tmp.z;
+    }
+    KOKKOS_INLINE_FUNCTION
+    void operator = (const lmp_float3& tmp) {
+      x=tmp.x;
+      y=tmp.y;
+      z=tmp.z;
+    }
+    KOKKOS_INLINE_FUNCTION
+    void operator = (const lmp_float3& tmp) volatile {
+      x=tmp.x;
+      y=tmp.y;
+      z=tmp.z;
+    }
+  };
+
+  struct lmp_double3 {
+    double x,y,z;
+    KOKKOS_INLINE_FUNCTION
+    lmp_double3():x(0.0),y(0.0),z(0.0) {}
+
+    KOKKOS_INLINE_FUNCTION
+    void operator += (const lmp_double3& tmp) {
+      x+=tmp.x;
+      y+=tmp.y;
+      z+=tmp.z;
+    }
+    KOKKOS_INLINE_FUNCTION
+    void operator += (const lmp_double3& tmp) volatile {
+      x+=tmp.x;
+      y+=tmp.y;
+      z+=tmp.z;
+    }
+    KOKKOS_INLINE_FUNCTION
+    void operator = (const lmp_double3& tmp) {
+      x=tmp.x;
+      y=tmp.y;
+      z=tmp.z;
+    }
+    KOKKOS_INLINE_FUNCTION
+    void operator = (const lmp_double3& tmp) volatile {
+      x=tmp.x;
+      y=tmp.y;
+      z=tmp.z;
+    }
+  };
+
+template<class Scalar>
+struct t_scalar3 {
+  Scalar x,y,z;
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  t_scalar3() {
+    x = 0; y = 0; z = 0;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  t_scalar3(const t_scalar3& rhs) {
+    x = rhs.x; y = rhs.y; z = rhs.z;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  t_scalar3(const Scalar& x_, const Scalar& y_, const Scalar& z_ ) {
+    x = x_; y = y_; z = z_;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  t_scalar3 operator= (const t_scalar3& rhs) {
+    x = rhs.x; y = rhs.y; z = rhs.z;
+    return *this;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  t_scalar3 operator= (const volatile t_scalar3& rhs) {
+    x = rhs.x; y = rhs.y; z = rhs.z;
+    return *this;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  t_scalar3 operator+= (const t_scalar3& rhs) {
+    x += rhs.x; y += rhs.y; z += rhs.z;
+    return *this;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION
+  t_scalar3 operator+= (const volatile t_scalar3& rhs) volatile {
+    x += rhs.x; y += rhs.y; z += rhs.z;
+    return *this;
+  }
+};
+
+template<class Scalar>
+KOKKOS_FORCEINLINE_FUNCTION
+t_scalar3<Scalar> operator +
+  (const t_scalar3<Scalar>& a, const t_scalar3<Scalar>& b) {
+  return t_scalar3<Scalar>(a.x+b.x,a.y+b.y,a.z+b.z);
+}
+
+template<class Scalar>
+KOKKOS_FORCEINLINE_FUNCTION
+t_scalar3<Scalar> operator *
+  (const t_scalar3<Scalar>& a, const Scalar& b) {
+  return t_scalar3<Scalar>(a.x*b,a.y*b,a.z*b);
+}
+
+template<class Scalar>
+KOKKOS_FORCEINLINE_FUNCTION
+t_scalar3<Scalar> operator *
+  (const Scalar& b, const t_scalar3<Scalar>& a) {
+  return t_scalar3<Scalar>(a.x*b,a.y*b,a.z*b);
+}
+
+// set LMPHostype and LMPDeviceType from Kokkos Default Types
+typedef Kokkos::DefaultExecutionSpace LMPDeviceType;
+typedef Kokkos::HostSpace::execution_space LMPHostType;
+
+
+// Need to use Cuda UVM memory space for Host execution space
+
+template<class DeviceType>
+class KKDevice {
+public:
+#if defined(KOKKOS_ENABLE_CUDA) && defined(KOKKOS_ENABLE_CUDA_UVM)
+  typedef Kokkos::Device<DeviceType,LMPDeviceType::memory_space> value;
+#else
+  typedef Kokkos::Device<DeviceType,typename DeviceType::memory_space> value;
+#endif
+};
+
+// Helpers for readability
+
+using KKScatterSum = Kokkos::Experimental::ScatterSum;
+using KKScatterDuplicated = Kokkos::Experimental::ScatterDuplicated;
+using KKScatterNonDuplicated = Kokkos::Experimental::ScatterNonDuplicated;
+
+template<typename DataType, typename Layout, typename Device, typename... Args>
+using KKScatterView = Kokkos::Experimental::ScatterView<DataType, Layout, Device, Args...>;
+
+
+// set ExecutionSpace stuct with variable "space"
+
+template<class Device>
+struct ExecutionSpaceFromDevice;
+
+template<>
+struct ExecutionSpaceFromDevice<LMPHostType> {
+  static const LAMMPS_NS::ExecutionSpace space = LAMMPS_NS::Host;
+};
+
+#ifdef KOKKOS_ENABLE_CUDA
+template<>
+struct ExecutionSpaceFromDevice<Kokkos::Cuda> {
+  static const LAMMPS_NS::ExecutionSpace space = LAMMPS_NS::Device;
+};
+#elif defined(KOKKOS_ENABLE_HIP)
+template<>
+struct ExecutionSpaceFromDevice<Kokkos::Experimental::HIP> {
+  static const LAMMPS_NS::ExecutionSpace space = LAMMPS_NS::Device;
+};
+#elif defined(KOKKOS_ENABLE_SYCL)
+template<>
+struct ExecutionSpaceFromDevice<Kokkos::Experimental::SYCL> {
+  static const LAMMPS_NS::ExecutionSpace space = LAMMPS_NS::Device;
+};
+#elif defined(KOKKOS_ENABLE_OPENMPTARGET)
+template<>
+struct ExecutionSpaceFromDevice<Kokkos::Experimental::OpenMPTarget> {
+  static const LAMMPS_NS::ExecutionSpace space = LAMMPS_NS::Device;
+};
+#endif
+
+// set host pinned space
+#if defined(KOKKOS_ENABLE_CUDA)
+typedef Kokkos::CudaHostPinnedSpace LMPPinnedHostType;
+#elif defined(KOKKOS_ENABLE_HIP)
+typedef Kokkos::Experimental::HIPHostPinnedSpace LMPPinnedHostType;
+#elif defined(KOKKOS_ENABLE_SYCL)
+typedef Kokkos::Experimental::SYCLHostUSMSpace LMPPinnedHostType;
+#elif defined(KOKKOS_ENABLE_OPENMPTARGET)
+typedef Kokkos::Serial LMPPinnedHostType;
+#else
+typedef LMPHostType LMPPinnedHostType;
+#endif
+
+// create simple LMPDeviceSpace typedef for non CUDA-, HIP-, or SYCL-specific
+// behaviour
+#if defined(KOKKOS_ENABLE_CUDA)
+typedef Kokkos::Cuda LMPDeviceSpace;
+#elif defined(KOKKOS_ENABLE_HIP)
+typedef Kokkos::Experimental::HIP LMPDeviceSpace;
+#elif defined(KOKKOS_ENABLE_SYCL)
+typedef Kokkos::Experimental::SYCL LMPDeviceSpace;
+#elif defined(KOKKOS_ENABLE_OPENMPTARGET)
+typedef Kokkos::Experimental::OpenMPTarget LMPDeviceSpace;
+#endif
+
 
 // Determine memory traits for force array
 // Do atomic trait when running HALFTHREAD neighbor list style
@@ -71,31 +284,41 @@ struct AtomicDup {
   using value = Kokkos::Experimental::ScatterNonAtomic;
 };
 
-#ifdef SYCL_ENABLE_CUDA
+template<int NEIGHFLAG, class DeviceType>
+using AtomicDup_v = typename AtomicDup<NEIGHFLAG, DeviceType>::value;
+
+#ifdef KOKKOS_ENABLE_CUDA
 template<>
 struct AtomicDup<HALFTHREAD,Kokkos::Cuda> {
   using value = Kokkos::Experimental::ScatterAtomic;
 };
-#elif defined(SYCL_ENABLE_HIP)
+#elif defined(KOKKOS_ENABLE_HIP)
 template<>
 struct AtomicDup<HALFTHREAD,Kokkos::Experimental::HIP> {
   using value = Kokkos::Experimental::ScatterAtomic;
 };
-#elif defined(SYCL_ENABLE_SYCL)
+#elif defined(KOKKOS_ENABLE_SYCL)
 template<>
 struct AtomicDup<HALFTHREAD,Kokkos::Experimental::SYCL> {
   using value = Kokkos::Experimental::ScatterAtomic;
 };
-#elif defined(SYCL_ENABLE_OPENMPTARGET)
+#elif defined(KOKKOS_ENABLE_OPENMPTARGET)
 template<>
 struct AtomicDup<HALFTHREAD,Kokkos::Experimental::OpenMPTarget> {
   using value = Kokkos::Experimental::ScatterAtomic;
 };
 #endif
 
-#ifdef LMP_SYCL_USE_ATOMICS
+#ifdef LMP_KOKKOS_USE_ATOMICS
 
-#ifdef SYCL_ENABLE_THREADS
+#ifdef KOKKOS_ENABLE_OPENMP
+template<>
+struct AtomicDup<HALFTHREAD,Kokkos::OpenMP> {
+  using value = Kokkos::Experimental::ScatterAtomic;
+};
+#endif
+
+#ifdef KOKKOS_ENABLE_THREADS
 template<>
 struct AtomicDup<HALFTHREAD,Kokkos::Threads> {
   using value = Kokkos::Experimental::ScatterAtomic;
@@ -112,16 +335,19 @@ struct NeedDup {
   using value = Kokkos::Experimental::ScatterNonDuplicated;
 };
 
-#ifndef LMP_SYCL_USE_ATOMICS
+template<int NEIGHFLAG, class DeviceType>
+using NeedDup_v = typename NeedDup<NEIGHFLAG,DeviceType>::value;
 
-#ifdef SYCL_ENABLE_OPENMP
+#ifndef LMP_KOKKOS_USE_ATOMICS
+
+#ifdef KOKKOS_ENABLE_OPENMP
 template<>
 struct NeedDup<HALFTHREAD,Kokkos::OpenMP> {
   using value = Kokkos::Experimental::ScatterDuplicated;
 };
 #endif
 
-#ifdef SYCL_ENABLE_THREADS
+#ifdef KOKKOS_ENABLE_THREADS
 template<>
 struct NeedDup<HALFTHREAD,Kokkos::Threads> {
   using value = Kokkos::Experimental::ScatterDuplicated;
@@ -136,7 +362,7 @@ class ScatterViewHelper {};
 template<typename T1, typename T2>
 class ScatterViewHelper<Kokkos::Experimental::ScatterDuplicated,T1,T2> {
 public:
-  __attribute__((always_inline))
+  KOKKOS_INLINE_FUNCTION
   static T1 get(const T1 &dup, const T2 & /*nondup*/) {
     return dup;
   }
@@ -145,7 +371,7 @@ public:
 template<typename T1, typename T2>
 class ScatterViewHelper<Kokkos::Experimental::ScatterNonDuplicated,T1,T2> {
 public:
-  __attribute__((always_inline))
+  KOKKOS_INLINE_FUNCTION
   static T2 get(const T1 & /*dup*/, const T2 &nondup) {
     return nondup;
   }
@@ -183,6 +409,139 @@ typedef float E_FLOAT;
 #else
 typedef double E_FLOAT;
 #endif
+
+struct s_EV_FLOAT {
+  E_FLOAT evdwl;
+  E_FLOAT ecoul;
+  E_FLOAT v[6];
+  KOKKOS_INLINE_FUNCTION
+  s_EV_FLOAT() {
+    evdwl = 0;
+    ecoul = 0;
+    for (int i = 0; i < 6; ++i)
+      v[i] = 0;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const s_EV_FLOAT &rhs) {
+    evdwl += rhs.evdwl;
+    ecoul += rhs.ecoul;
+    for (int i = 0; i < 6; ++i)
+      v[i] += rhs.v[i];
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const volatile s_EV_FLOAT &rhs) volatile {
+    evdwl += rhs.evdwl;
+    ecoul += rhs.ecoul;
+    for (int i = 0; i < 6; ++i)
+      v[i] += rhs.v[i];
+  }
+};
+typedef struct s_EV_FLOAT EV_FLOAT;
+
+struct s_EV_FLOAT_REAX {
+  E_FLOAT evdwl;
+  E_FLOAT ecoul;
+  E_FLOAT v[6];
+  E_FLOAT ereax[9];
+  KOKKOS_INLINE_FUNCTION
+  s_EV_FLOAT_REAX() {
+    evdwl = 0;
+    ecoul = 0;
+    for (int i = 0; i < 6; ++i)
+      v[i] = 0;
+    for (int i = 0; i < 9; ++i)
+      ereax[i] = 0;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const s_EV_FLOAT_REAX &rhs) {
+    evdwl += rhs.evdwl;
+    ecoul += rhs.ecoul;
+    for (int i = 0; i < 6; ++i)
+      v[i] += rhs.v[i];
+    for (int i = 0; i < 9; ++i)
+      ereax[i] += rhs.ereax[i];
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const volatile s_EV_FLOAT_REAX &rhs) volatile {
+    evdwl += rhs.evdwl;
+    ecoul += rhs.ecoul;
+    for (int i = 0; i < 6; ++i)
+      v[i] += rhs.v[i];
+    for (int i = 0; i < 9; ++i)
+      ereax[i] += rhs.ereax[i];
+  }
+};
+typedef struct s_EV_FLOAT_REAX EV_FLOAT_REAX;
+
+struct s_FEV_FLOAT {
+  F_FLOAT f[3];
+  E_FLOAT evdwl;
+  E_FLOAT ecoul;
+  E_FLOAT v[6];
+  KOKKOS_INLINE_FUNCTION
+  s_FEV_FLOAT() {
+    evdwl = 0;
+    ecoul = 0;
+    for (int i = 0; i < 6; ++i)
+      v[i] = 0;
+    for (int i = 0; i < 3; ++i)
+      f[i] = 0;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const s_FEV_FLOAT &rhs) {
+    evdwl += rhs.evdwl;
+    ecoul += rhs.ecoul;
+    for (int i = 0; i < 6; ++i)
+      v[i] += rhs.v[i];
+    for (int i = 0; i < 3; ++i)
+      f[i] += rhs.f[i];
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const volatile s_FEV_FLOAT &rhs) volatile {
+    evdwl += rhs.evdwl;
+    ecoul += rhs.ecoul;
+    for (int i = 0; i < 6; ++i)
+      v[i] += rhs.v[i];
+    for (int i = 0; i < 3; ++i)
+      f[i] += rhs.f[i];
+  }
+};
+typedef struct s_FEV_FLOAT FEV_FLOAT;
+
+struct alignas(2*sizeof(F_FLOAT)) s_FLOAT2 {
+  F_FLOAT v[2];
+
+  KOKKOS_INLINE_FUNCTION
+  s_FLOAT2() {
+    v[0] = v[1] = 0.0;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  s_FLOAT2(const s_FLOAT2 & rhs) {
+    for (int i = 0; i < 2; i++){
+      v[i] = rhs.v[i];
+    }
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const s_FLOAT2 &rhs) {
+    v[0] += rhs.v[0];
+    v[1] += rhs.v[1];
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  void operator+=(const volatile s_FLOAT2 &rhs) volatile {
+    v[0] += rhs.v[0];
+    v[1] += rhs.v[1];
+  }
+};
+typedef struct s_FLOAT2 F_FLOAT2;
 
 #ifndef PREC_POS
 #define PREC_POS PRECISION
@@ -224,11 +583,11 @@ struct dual_hash_type {
   host_hash_type h_view;
 
   template<class DeviceType>
-  __attribute__((always_inline))
+  KOKKOS_INLINE_FUNCTION
   std::enable_if_t<(std::is_same<DeviceType,LMPDeviceType>::value || Kokkos::SpaceAccessibility<LMPDeviceType::memory_space,LMPHostType::memory_space>::accessible),hash_type&> view() {return d_view;}
 
   template<class DeviceType>
-  __attribute__((always_inline))
+  KOKKOS_INLINE_FUNCTION
   std::enable_if_t<!(std::is_same<DeviceType,LMPDeviceType>::value || Kokkos::SpaceAccessibility<LMPDeviceType::memory_space,LMPHostType::memory_space>::accessible),host_hash_type&> view() {return h_view;}
 
 };
@@ -241,13 +600,16 @@ struct ArrayTypes<LMPDeviceType> {
 
 // scalar types
 
-typedef Kokkos::DualView<int, LMPDeviceType::array_layout, LMPDeviceType> tdual_int_scalar;
+typedef Kokkos::
+  DualView<int, LMPDeviceType::array_layout, LMPDeviceType> tdual_int_scalar;
 typedef tdual_int_scalar::t_dev t_int_scalar;
 typedef tdual_int_scalar::t_dev_const t_int_scalar_const;
 typedef tdual_int_scalar::t_dev_um t_int_scalar_um;
 typedef tdual_int_scalar::t_dev_const_um t_int_scalar_const_um;
 
-typedef Kokkos::DualView<LMP_FLOAT, LMPDeviceType::array_layout, LMPDeviceType> tdual_float_scalar;
+typedef Kokkos::
+  DualView<LMP_FLOAT, LMPDeviceType::array_layout, LMPDeviceType>
+  tdual_float_scalar;
 typedef tdual_float_scalar::t_dev t_float_scalar;
 typedef tdual_float_scalar::t_dev_const t_float_scalar_const;
 typedef tdual_float_scalar::t_dev_um t_float_scalar_um;
@@ -347,6 +709,20 @@ typedef tdual_float_2d::t_dev_um t_float_2d_um;
 typedef tdual_float_2d::t_dev_const_um t_float_2d_const_um;
 typedef tdual_float_2d::t_dev_const_randomread t_float_2d_randomread;
 
+//3d float array n
+typedef Kokkos::DualView<LMP_FLOAT***, Kokkos::LayoutRight, LMPDeviceType> tdual_float_3d;
+typedef tdual_float_3d::t_dev t_float_3d;
+typedef tdual_float_3d::t_dev_const t_float_3d_const;
+typedef tdual_float_3d::t_dev_um t_float_3d_um;
+typedef tdual_float_3d::t_dev_const_um t_float_3d_const_um;
+typedef tdual_float_3d::t_dev_const_randomread t_float_3d_randomread;
+
+#ifdef LMP_KOKKOS_NO_LEGACY
+typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutLeft, LMPDeviceType> tdual_float_1d_4;
+#else
+typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutRight, LMPDeviceType> tdual_float_1d_4;
+#endif
+
 //Position Types
 //1d X_FLOAT array n
 typedef Kokkos::DualView<X_FLOAT*, LMPDeviceType::array_layout, LMPDeviceType> tdual_xfloat_1d;
@@ -365,7 +741,7 @@ typedef tdual_xfloat_2d::t_dev_const_um t_xfloat_2d_const_um;
 typedef tdual_xfloat_2d::t_dev_const_randomread t_xfloat_2d_randomread;
 
 //2d X_FLOAT array n*4
-#ifdef LMP_SYCL_NO_LEGACY
+#ifdef LMP_KOKKOS_NO_LEGACY
 typedef Kokkos::DualView<X_FLOAT*[3], Kokkos::LayoutLeft, LMPDeviceType> tdual_x_array;
 #else
 typedef Kokkos::DualView<X_FLOAT*[3], Kokkos::LayoutRight, LMPDeviceType> tdual_x_array;
@@ -412,6 +788,14 @@ typedef tdual_ffloat_1d::t_dev_um t_ffloat_1d_um;
 typedef tdual_ffloat_1d::t_dev_const_um t_ffloat_1d_const_um;
 typedef tdual_ffloat_1d::t_dev_const_randomread t_ffloat_1d_randomread;
 
+// 1d F_FLOAT2 array n
+typedef Kokkos::DualView<F_FLOAT*[2], Kokkos::LayoutRight, LMPDeviceType> tdual_ffloat2_1d;
+typedef tdual_ffloat2_1d::t_dev t_ffloat2_1d;
+typedef tdual_ffloat2_1d::t_dev_const t_ffloat2_1d_const;
+typedef tdual_ffloat2_1d::t_dev_um t_ffloat2_1d_um;
+typedef tdual_ffloat2_1d::t_dev_const_um t_ffloat2_1d_const_um;
+typedef tdual_ffloat2_1d::t_dev_const_randomread t_ffloat2_1d_randomread;
+
 //2d F_FLOAT array n*m
 
 typedef Kokkos::DualView<F_FLOAT**, Kokkos::LayoutRight, LMPDeviceType> tdual_ffloat_2d;
@@ -440,6 +824,14 @@ typedef tdual_f_array::t_dev_um t_f_array_um;
 typedef tdual_f_array::t_dev_const_um t_f_array_const_um;
 typedef tdual_f_array::t_dev_const_randomread t_f_array_randomread;
 
+//2d F_FLOAT array n*4 (for dipoles and quaterions)
+
+typedef tdual_float_1d_4::t_dev t_mu_array;
+typedef tdual_float_1d_4::t_dev_const t_mu_array_const;
+typedef tdual_float_1d_4::t_dev_um t_mu_array_um;
+typedef tdual_float_1d_4::t_dev_const_um t_mu_array_const_um;
+typedef tdual_float_1d_4::t_dev_const_randomread t_mu_array_randomread;
+
 //2d F_FLOAT array n*6 (for virial)
 
 typedef Kokkos::DualView<F_FLOAT*[6], Kokkos::LayoutRight, LMPDeviceType> tdual_virial_array;
@@ -452,11 +844,7 @@ typedef tdual_virial_array::t_dev_const_randomread t_virial_array_randomread;
 // Spin Types
 
 //3d SP_FLOAT array n*4
-#ifdef LMP_SYCL_NO_LEGACY
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutLeft, LMPDeviceType> tdual_float_1d_4;
-#else
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutRight, LMPDeviceType> tdual_float_1d_4;
-#endif
+
 typedef tdual_float_1d_4::t_dev t_sp_array;
 typedef tdual_float_1d_4::t_dev_const t_sp_array_const;
 typedef tdual_float_1d_4::t_dev_um t_sp_array_um;
@@ -516,9 +904,16 @@ typedef tdual_neighbors_2d::t_dev_um t_neighbors_2d_um;
 typedef tdual_neighbors_2d::t_dev_const_um t_neighbors_2d_const_um;
 typedef tdual_neighbors_2d::t_dev_const_randomread t_neighbors_2d_randomread;
 
+typedef Kokkos::DualView<int**, Kokkos::LayoutRight, LMPDeviceType> tdual_neighbors_2d_lr;
+typedef tdual_neighbors_2d_lr::t_dev t_neighbors_2d_lr;
+typedef tdual_neighbors_2d_lr::t_dev_const t_neighbors_2d_const_lr;
+typedef tdual_neighbors_2d_lr::t_dev_um t_neighbors_2d_um_lr;
+typedef tdual_neighbors_2d_lr::t_dev_const_um t_neighbors_2d_const_um_lr;
+typedef tdual_neighbors_2d_lr::t_dev_const_randomread t_neighbors_2d_randomread_lr;
+
 };
 
-#ifdef LMP_SYCL_GPU
+#ifdef LMP_KOKKOS_GPU
 template <>
 struct ArrayTypes<LMPHostType> {
 
@@ -622,6 +1017,12 @@ typedef tdual_float_2d::t_host_um t_float_2d_um;
 typedef tdual_float_2d::t_host_const_um t_float_2d_const_um;
 typedef tdual_float_2d::t_host_const_randomread t_float_2d_randomread;
 
+#ifdef LMP_KOKKOS_NO_LEGACY
+typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutLeft, LMPDeviceType> tdual_float_1d_4;
+#else
+typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutRight, LMPDeviceType> tdual_float_1d_4;
+#endif
+
 //Position Types
 //1d X_FLOAT array n
 typedef Kokkos::DualView<X_FLOAT*, LMPDeviceType::array_layout, LMPDeviceType> tdual_xfloat_1d;
@@ -682,6 +1083,14 @@ typedef tdual_ffloat_1d::t_host_um t_ffloat_1d_um;
 typedef tdual_ffloat_1d::t_host_const_um t_ffloat_1d_const_um;
 typedef tdual_ffloat_1d::t_host_const_randomread t_ffloat_1d_randomread;
 
+// 1d F_FLOAT2 array n
+typedef Kokkos::DualView<F_FLOAT*[2], Kokkos::LayoutRight, LMPDeviceType> tdual_ffloat2_1d;
+typedef tdual_ffloat2_1d::t_host t_ffloat2_1d;
+typedef tdual_ffloat2_1d::t_host_const t_ffloat2_1d_const;
+typedef tdual_ffloat2_1d::t_host_um t_ffloat2_1d_um;
+typedef tdual_ffloat2_1d::t_host_const_um t_ffloat2_1d_const_um;
+typedef tdual_ffloat2_1d::t_host_const_randomread t_ffloat2_1d_randomread;
+
 //2d F_FLOAT array n*m
 typedef Kokkos::DualView<F_FLOAT**, Kokkos::LayoutRight, LMPDeviceType> tdual_ffloat_2d;
 typedef tdual_ffloat_2d::t_host t_ffloat_2d;
@@ -707,6 +1116,14 @@ typedef tdual_f_array::t_host_um t_f_array_um;
 typedef tdual_f_array::t_host_const_um t_f_array_const_um;
 typedef tdual_f_array::t_host_const_randomread t_f_array_randomread;
 
+//2d F_FLOAT array n*4 (for dipoles and quaterions)
+
+typedef tdual_float_1d_4::t_host t_mu_array;
+typedef tdual_float_1d_4::t_host_const t_mu_array_const;
+typedef tdual_float_1d_4::t_host_um t_mu_array_um;
+typedef tdual_float_1d_4::t_host_const_um t_mu_array_const_um;
+typedef tdual_float_1d_4::t_host_const_randomread t_mu_array_randomread;
+
 //2d F_FLOAT array n*6 (for virial)
 typedef Kokkos::DualView<F_FLOAT*[6], Kokkos::LayoutRight, LMPDeviceType> tdual_virial_array;
 typedef tdual_virial_array::t_host t_virial_array;
@@ -718,11 +1135,6 @@ typedef tdual_virial_array::t_host_const_randomread t_virial_array_randomread;
 // Spin types
 
 //2d X_FLOAT array n*4
-#ifdef LMP_SYCL_NO_LEGACY
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutLeft, LMPDeviceType> tdual_float_1d_4;
-#else
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutRight, LMPDeviceType> tdual_float_1d_4;
-#endif
 typedef tdual_float_1d_4::t_host t_sp_array;
 typedef tdual_float_1d_4::t_host_const t_sp_array_const;
 typedef tdual_float_1d_4::t_host_um t_sp_array_um;
@@ -777,6 +1189,13 @@ typedef tdual_neighbors_2d::t_host_um t_neighbors_2d_um;
 typedef tdual_neighbors_2d::t_host_const_um t_neighbors_2d_const_um;
 typedef tdual_neighbors_2d::t_host_const_randomread t_neighbors_2d_randomread;
 
+typedef Kokkos::DualView<int**, Kokkos::LayoutRight, LMPDeviceType> tdual_neighbors_2d_lr;
+typedef tdual_neighbors_2d_lr::t_host t_neighbors_2d_lr;
+typedef tdual_neighbors_2d_lr::t_host_const t_neighbors_2d_const_lr;
+typedef tdual_neighbors_2d_lr::t_host_um t_neighbors_2d_um_lr;
+typedef tdual_neighbors_2d_lr::t_host_const_um t_neighbors_2d_const_um_lr;
+typedef tdual_neighbors_2d_lr::t_host_const_randomread t_neighbors_2d_randomread_lr;
+
 };
 #endif
 //default LAMMPS Types
@@ -796,7 +1215,7 @@ template<class DeviceType>
 struct MemsetZeroFunctor {
   typedef DeviceType  execution_space ;
   void* ptr;
-  __attribute__((always_inline)) void operator()(const int i) const {
+  KOKKOS_INLINE_FUNCTION void operator()(const int i) const {
     ((int*)ptr)[i] = 0;
   }
 };
@@ -805,7 +1224,7 @@ template<class ViewType>
 void memset_kokkos (ViewType &view) {
   static MemsetZeroFunctor<typename ViewType::execution_space> f;
   f.ptr = view.data();
-  #ifndef SYCL_USING_DEPRECATED_VIEW
+  #ifndef KOKKOS_USING_DEPRECATED_VIEW
   Kokkos::parallel_for(view.span()*sizeof(typename ViewType::value_type)/4, f);
   #else
   Kokkos::parallel_for(view.span()*sizeof(typename ViewType::value_type)/4, f);
@@ -814,32 +1233,124 @@ void memset_kokkos (ViewType &view) {
 }
 
 struct params_lj_coul {
-  __attribute__((always_inline))
+  KOKKOS_INLINE_FUNCTION
   params_lj_coul() {cut_ljsq=0;cut_coulsq=0;lj1=0;lj2=0;lj3=0;lj4=0;offset=0;};
-  __attribute__((always_inline))
+  KOKKOS_INLINE_FUNCTION
   params_lj_coul(int /*i*/) {cut_ljsq=0;cut_coulsq=0;lj1=0;lj2=0;lj3=0;lj4=0;offset=0;};
   F_FLOAT cut_ljsq,cut_coulsq,lj1,lj2,lj3,lj4,offset;
 };
 
+// ReaxFF
+
+struct alignas(4 * sizeof(int)) reax_int4 {
+  int i0, i1, i2, i3;
+};
+
 // Pair SNAP
 
-#define SNAP_SYCL_REAL double
-#define SNAP_SYCL_HOST_VECLEN 1
+#define SNAP_KOKKOS_REAL double
+#define SNAP_KOKKOS_HOST_VECLEN 1
 
-#ifdef LMP_SYCL_GPU
-#define SNAP_SYCL_DEVICE_VECLEN 16
+#ifdef LMP_KOKKOS_GPU
+#define SNAP_KOKKOS_DEVICE_VECLEN 32
 #else
-#define SNAP_SYCL_DEVICE_VECLEN 1
+#define SNAP_KOKKOS_DEVICE_VECLEN 1
 #endif
 
 
 // intentional: SNAreal/complex gets reused beyond SNAP
 typedef double SNAreal;
 
-#define LAMMPS_LAMBDA [=]
+//typedef struct { SNAreal re, im; } SNAcomplex;
+template <typename real_type_>
+struct alignas(2*sizeof(real_type_)) SNAComplex
+{
+  using real_type = real_type_;
+  using complex = SNAComplex<real_type>;
+  real_type re,im;
 
-#ifdef LMP_SYCL_GPU
-#if defined(__SYCL_DEVICE_ONLY__)
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex()
+   : re(static_cast<real_type>(0.)), im(static_cast<real_type>(0.)) { ; }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex(real_type re)
+   : re(re), im(static_cast<real_type>(0.)) { ; }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex(real_type re, real_type im)
+   : re(re), im(im) { ; }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex(const SNAComplex& other)
+   : re(other.re), im(other.im) { ; }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex& operator=(const SNAComplex& other) {
+    re = other.re; im = other.im;
+    return *this;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex(SNAComplex&& other)
+   : re(other.re), im(other.im) { ; }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex& operator=(SNAComplex&& other) {
+    re = other.re; im = other.im;
+    return *this;
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex operator+(SNAComplex const& other) {
+    return SNAComplex(re + other.re, im + other.im);
+  }
+
+  KOKKOS_FORCEINLINE_FUNCTION SNAComplex& operator+=(SNAComplex const& other) {
+    re += other.re; im += other.im;
+    return *this;
+  }
+
+  KOKKOS_INLINE_FUNCTION
+  static constexpr complex zero() { return complex(static_cast<real_type>(0.), static_cast<real_type>(0.)); }
+
+  KOKKOS_INLINE_FUNCTION
+  static constexpr complex one() { return complex(static_cast<real_type>(1.), static_cast<real_type>(0.)); }
+
+  KOKKOS_INLINE_FUNCTION
+  const complex conj() const { return complex(re, -im); }
+
+  KOKKOS_INLINE_FUNCTION
+  const real_type real_part_product(const complex &cm2) { return re * cm2.re - im * cm2.im; }
+
+  KOKKOS_INLINE_FUNCTION
+  const real_type real_part_product(const real_type &r) const { return re * r; }
+};
+
+template <typename real_type>
+KOKKOS_FORCEINLINE_FUNCTION SNAComplex<real_type> operator*(const real_type& r, const SNAComplex<real_type>& self) {
+  return SNAComplex<real_type>(r*self.re, r*self.im);
+}
+
+template <typename real_type>
+KOKKOS_FORCEINLINE_FUNCTION SNAComplex<real_type> operator*(const SNAComplex<real_type>& self, const real_type& r) {
+  return SNAComplex<real_type>(r*self.re, r*self.im);
+}
+
+template <typename real_type>
+KOKKOS_FORCEINLINE_FUNCTION SNAComplex<real_type> operator*(const SNAComplex<real_type>& self, const SNAComplex<real_type>& cm2) {
+  return SNAComplex<real_type>(self.re*cm2.re - self.im*cm2.im, self.re*cm2.im + self.im*cm2.re);
+}
+
+typedef SNAComplex<SNAreal> SNAcomplex;
+
+#if defined(KOKKOS_ENABLE_CXX11)
+#undef ISFINITE
+#define ISFINITE(x) std::isfinite(x)
+#endif
+
+#define LAMMPS_LAMBDA KOKKOS_LAMBDA
+
+#if defined(KOKKOS_ENABLE_CUDA) || defined(KOKKOS_ENABLE_HIP)
+#define LAMMPS_DEVICE_FUNCTION __device__
+#else
+#define LAMMPS_DEVICE_FUNCTION
+#endif
+
+#ifdef LMP_KOKKOS_GPU
+#if defined(__CUDA_ARCH__) || defined(__HIP_DEVICE_COMPILE__) || defined(__SYCL_DEVICE_ONLY__)
 #define LMP_KK_DEVICE_COMPILE
 #endif
 #endif

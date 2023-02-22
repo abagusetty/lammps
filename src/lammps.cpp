@@ -30,6 +30,7 @@
 #include "style_region.h"    // IWYU pragma: keep
 
 #include "accelerator_kokkos.h"
+#include "accelerator_sycl.h"
 #include "accelerator_omp.h"
 #include "atom.h"
 #include "citeme.h"
@@ -122,7 +123,8 @@ LAMMPS::LAMMPS(int narg, char **arg, MPI_Comm communicator) :
   memory(nullptr), error(nullptr), universe(nullptr), input(nullptr), atom(nullptr),
   update(nullptr), neighbor(nullptr), comm(nullptr), domain(nullptr), force(nullptr),
   modify(nullptr), group(nullptr), output(nullptr), timer(nullptr), kokkos(nullptr),
-  atomKK(nullptr), memoryKK(nullptr), python(nullptr), citeme(nullptr)
+  atomKK(nullptr), memoryKK(nullptr), sycl(nullptr),
+  atomSYCL(nullptr), memorySYCL(nullptr), python(nullptr), citeme(nullptr)
 {
   memory = new Memory(this);
   error = new Error(this);
@@ -191,6 +193,7 @@ LAMMPS::LAMMPS(int narg, char **arg, MPI_Comm communicator) :
   int partscreenflag = 0;
   int partlogflag = 0;
   int kokkosflag = 0;
+  int syclflag = 0;
   int restart2data = 0;
   int restart2dump = 0;
   int restartremap = 0;
@@ -280,6 +283,22 @@ LAMMPS::LAMMPS(int narg, char **arg, MPI_Comm communicator) :
       else error->universe_all(FLERR,"Invalid command-line argument");
       iarg += 2;
       // delimit any extra args for the Kokkos instantiation
+      kkfirst = iarg;
+      while (iarg < narg && arg[iarg][0] != '-') iarg++;
+      kklast = iarg;
+
+    } else if (strcmp(arg[iarg],"-sycl") == 0 ||
+               strcmp(arg[iarg],"-s") == 0) {
+      if (iarg+2 > narg)
+        error->universe_all(FLERR,"Invalid command-line argument");
+      const std::string syclarg = arg[iarg+1];
+      if ((syclarg == "on") || (syclarg == "yes") || (syclarg == "true"))
+        syclflag = 1;
+      else if ((syclarg == "off") || (syclarg == "no") || (syclarg == "false"))
+        syclflag = 0;
+      else error->universe_all(FLERR,"Invalid command-line argument");
+      iarg += 2;
+      // delimit any extra args for the Sycl instantiation
       kkfirst = iarg;
       while (iarg < narg && arg[iarg][0] != '-') iarg++;
       kklast = iarg;
@@ -670,6 +689,17 @@ LAMMPS::LAMMPS(int narg, char **arg, MPI_Comm communicator) :
       error->all(FLERR,"Cannot use -kokkos on without KOKKOS installed");
   }
 
+  // create Sycl class if SYCL installed, unless explicitly switched off
+  // instantiation creates dummy Sycl class if SYCL is not installed
+  // add args between kkfirst and kklast to Sycl instantiation
+
+  sycl = nullptr;
+  if (syclflag == 1) {
+    sycl = new SyclLMP(this,kklast-kkfirst,&arg[kkfirst]);
+    if (!sycl->sycl_exists)
+      error->all(FLERR,"Cannot use -sycl on without SYCL installed");
+  }
+
   // allocate CiteMe class if enabled
 
   if (citeflag) citeme = new CiteMe(this,citescreen,citelogfile,citefile);
@@ -779,6 +809,7 @@ LAMMPS::~LAMMPS()
 
   delete python;
   delete kokkos;
+  delete sycl;
   delete[] suffix;
   delete[] suffix2;
 
@@ -812,12 +843,15 @@ void LAMMPS::create()
   // so that nthreads is defined when create_avec invokes grow()
 
   if (kokkos) comm = new CommKokkos(this);
+  else if (sycl) comm = new CommSycl(this);
   else comm = new CommBrick(this);
 
   if (kokkos) neighbor = new NeighborKokkos(this);
+  else if (sycl) neighbor = new NeighborSycl(this);
   else neighbor = new Neighbor(this);
 
   if (kokkos) domain = new DomainKokkos(this);
+  else if (sycl) domain = new DomainSycl(this);
 #ifdef LMP_OPENMP
   else domain = new DomainOMP(this);
 #else
@@ -825,10 +859,13 @@ void LAMMPS::create()
 #endif
 
   if (kokkos) atom = new AtomKokkos(this);
+  else if (sycl) atom = new AtomSycl(this);
   else atom = new Atom(this);
 
   if (kokkos)
     atom->create_avec("atomic/kk",0,nullptr,1);
+  else if (sycl)
+    atom->create_avec("atomic/sycl",0,nullptr,1);
   else
     atom->create_avec("atomic",0,nullptr,1);
 
@@ -836,6 +873,7 @@ void LAMMPS::create()
   force = new Force(this);    // must be after group, to create temperature
 
   if (kokkos) modify = new ModifyKokkos(this);
+  else if (sycl) modify = new ModifySycl(this);
   else modify = new Modify(this);
 
   output = new Output(this);  // must be after group, so "all" exists
@@ -868,8 +906,9 @@ void LAMMPS::post_create()
   int package_issued = Suffix::NONE;
 
   // default package command triggered by "-k on"
-
   if (kokkos && kokkos->kokkos_exists) input->one("package kokkos");
+  // default package command triggered by "-s on"
+  if (sycl && sycl->sycl_exists) input->one("package sycl");
 
   // invoke any command-line package commands
 
@@ -904,6 +943,9 @@ void LAMMPS::post_create()
     if (strcmp(suffix,"kk") == 0 &&
         (kokkos == nullptr || kokkos->kokkos_exists == 0))
       error->all(FLERR,"Using suffix kk without KOKKOS package enabled");
+    if (strcmp(suffix,"sycl") == 0 &&
+        (sycl == nullptr || sycl->sycl_exists == 0))
+      error->all(FLERR,"Using suffix sycl without SYCL package enabled");
     if (strcmp(suffix,"omp") == 0 && !modify->check_package("OMP"))
       error->all(FLERR,"Using suffix omp without OPENMP package installed");
 
@@ -1166,8 +1208,11 @@ const char *LAMMPS::non_pair_suffix() const
 {
   const char *mysuffix;
   if (pair_only_flag) {
-#ifdef LMP_KOKKOS_GPU
+#if defined(LMP_KOKKOS_GPU)
     if (utils::strmatch(suffix,"^kk")) mysuffix = "kk/host";
+    else mysuffix = nullptr;
+#elif defined(LMP_SYCL_GPU)
+    if (utils::strmatch(suffix,"^sycl")) mysuffix = "sycl/host";
     else mysuffix = nullptr;
 #else
     mysuffix = nullptr;
@@ -1228,6 +1273,7 @@ void _noopt LAMMPS::help()
           "-help                       : print this help message (-h)\n"
           "-in none/filename           : read input from file or stdin (default) (-i)\n"
           "-kokkos on/off ...          : turn KOKKOS mode on or off (-k)\n"
+          "-sycl on/off ...            : turn SYCL mode on or off (-s)\n"
           "-log none/filename          : where to send log output (-l)\n"
           "-mdi '<mdi flags>'          : pass flags to the MolSSI Driver Interface\n"
           "-mpicolor color             : which exe in a multi-exe mpirun cmd (-m)\n"
@@ -1372,6 +1418,7 @@ void _noopt LAMMPS::help()
    print style names in columns
    skip any internal style that starts with an upper-case letter
    also skip "redundant" KOKKOS styles ending in kk/host or kk/device
+   also skip "redundant" SYCL styles ending in sycl/host or sycl/device
 ------------------------------------------------------------------------- */
 
 void print_style(FILE *fp, const char *str, int &pos)

@@ -91,6 +91,8 @@ class Pointers {
     logfile(ptr->logfile),
     atomKK(ptr->atomKK),
     memoryKK(ptr->memoryKK),
+    atomSYCL(ptr->atomSYCL),
+    memorySYCL(ptr->memorySYCL),    
     python(ptr->python) {}
   virtual ~Pointers() = default;
 
@@ -127,6 +129,9 @@ class Pointers {
 
   class AtomKokkos *&atomKK;
   class MemoryKokkos *&memoryKK;
+  class AtomSYCL *&atomSYCL;
+  class MemorySYCL *&memorySYCL;
+  
   class Python *&python;
 };
 

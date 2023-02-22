@@ -30,8 +30,8 @@ PairStyle(snap/kk/host,PairSNAPSYCLDevice<LMPHostType>);
 #include "pair_snap.h"
 #include "sycl_type.h"
 #include "neigh_list_kokkos.h"
-#include "sna_kokkos.h"
-#include "pair_kokkos.h"
+#include "sna_sycl.h"
+#include "pair_sycl.h"
 
 namespace LAMMPS_NS {
 
@@ -57,19 +57,6 @@ template<int dir>
 struct TagPairSNAPComputeFusedDeidrjSmall{}; // more parallelism, more divergence
 template<int dir>
 struct TagPairSNAPComputeFusedDeidrjLarge{}; // less parallelism, no divergence
-
-// CPU backend only
-struct TagPairSNAPComputeNeighCPU{};
-struct TagPairSNAPPreUiCPU{};
-struct TagPairSNAPComputeUiCPU{};
-struct TagPairSNAPTransformUiCPU{};
-struct TagPairSNAPComputeZiCPU{};
-struct TagPairSNAPBetaCPU{};
-struct TagPairSNAPComputeBiCPU{};
-struct TagPairSNAPZeroYiCPU{};
-struct TagPairSNAPComputeYiCPU{};
-struct TagPairSNAPComputeDuidrjCPU{};
-struct TagPairSNAPComputeDeidrjCPU{};
 
 template<class DeviceType, typename real_type_, int vector_length_>
 class PairSNAPSYCL : public PairSNAP {
@@ -132,9 +119,6 @@ public:
   __attribute__((always_inline))
   void operator() (TagPairSNAPComputeForce<NEIGHFLAG,EVFLAG>,const int& ii, EV_FLOAT&) const;
 
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPBetaCPU,const int& ii) const;
-
   // GPU backend only
   __attribute__((always_inline))
   void operator() (TagPairSNAPComputeNeigh,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPComputeNeigh>::member_type& team) const;
@@ -180,34 +164,6 @@ public:
   __attribute__((always_inline))
   void operator() (TagPairSNAPComputeFusedDeidrjLarge<dir>,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPComputeFusedDeidrjLarge<dir> >::member_type& team) const;
 
-  // CPU backend only
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPComputeNeighCPU,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPComputeNeighCPU>::member_type& team) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPPreUiCPU,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPPreUiCPU>::member_type& team) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPComputeUiCPU,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPComputeUiCPU>::member_type& team) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPTransformUiCPU, const int j, const int iatom) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPComputeZiCPU,const int& ii) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPComputeBiCPU,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPComputeBiCPU>::member_type& team) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPComputeYiCPU,const int& ii) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPComputeDuidrjCPU,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPComputeDuidrjCPU>::member_type& team) const;
-
-  __attribute__((always_inline))
-  void operator() (TagPairSNAPComputeDeidrjCPU,const typename Kokkos::TeamPolicy<DeviceType, TagPairSNAPComputeDeidrjCPU>::member_type& team) const;
-
   template<int NEIGHFLAG>
   __attribute__((always_inline))
   void v_tally_xyz(EV_FLOAT &ev, const int &i, const int &j,
@@ -233,15 +189,15 @@ protected:
 
   void allocate() override;
 
-  stdex::mdspan<real_type*,   stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_radelem;     // element radii
-  stdex::mdspan<real_type*,   stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_wjelem;      // elements weights
-  stdex::mdspan<real_type**,  stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_coeffelem;   // element bispectrum coefficients
-  stdex::mdspan<real_type*,   stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_sinnerelem;  // element inner cutoff midpoint
-  stdex::mdspan<real_type*,   stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_dinnerelem;  // element inner cutoff half-width
-  stdex::mdspan<T_INT*,       stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_map;         // mapping from atom types to elements
-  stdex::mdspan<T_INT*,       stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_ninside;     // ninside for all atoms in list
-  stdex::mdspan<real_type**,  stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_beta;        // betas for all atoms in list
-  stdex::mdspan<real_type***, stdex::dextents<std::size_t, 1u>, stdex::layout_left > d_beta_pack;   // betas for all atoms in list, GPU
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_radelem;     // element radii
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_wjelem;      // elements weights
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 2u>, stdex::layout_right> d_coeffelem;   // element bispectrum coefficients
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_sinnerelem;  // element inner cutoff midpoint
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_dinnerelem;  // element inner cutoff half-width
+  stdex::mdspan<T_INT,     stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_map;         // mapping from atom types to elements
+  stdex::mdspan<T_INT,     stdex::dextents<std::size_t, 1u>, stdex::layout_right> d_ninside;     // ninside for all atoms in list
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 2u>, stdex::layout_right> d_beta;        // betas for all atoms in list
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 3u>, stdex::layout_left > d_beta_pack;   // betas for all atoms in list, GPU
 
   typedef Kokkos::DualView<F_FLOAT**, DeviceType> tdual_fparams;
   tdual_fparams k_cutsq;

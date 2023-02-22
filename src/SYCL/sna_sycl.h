@@ -21,8 +21,7 @@
 
 #include <complex>
 #include <ctime>
-#include <Kokkos_Core.hpp>
-#include "kokkos_type.h"
+#include <sycl_type.h>
 
 #ifdef __SYCL_DEVICE_ONLY__
 #include <sycl/sycl.hpp>
@@ -33,7 +32,7 @@ namespace LAMMPS_NS {
 template<typename real_type_, int vector_length_>
 struct WignerWrapper {
   using real_type = real_type_;
-  using complex = SNAComplex<real_type>;
+  using complex = std::complex<real_type>;
   static constexpr int vector_length = vector_length_;
 
   const int offset; // my offset into the vector (0, ..., vector_length - 1)
@@ -125,8 +124,8 @@ struct alignas(16) idxz_struct {
 };
 
 
-template<class DeviceType, typename real_type_, int vector_length_>
-class SNAKokkos {
+template<typename real_type_, int vector_length_>
+class SNASycl {
 
  public:
   using real_type = real_type_;
@@ -162,19 +161,19 @@ class SNAKokkos {
   typedef Kokkos::View<complex*****, DeviceType> t_sna_5c;
 
   inline
-  SNAKokkos() {};
+  SNASycl() {};
 
   __attribute__((always_inline))
-  SNAKokkos(const SNAKokkos<DeviceType,real_type,vector_length>& sna, const typename Kokkos::TeamPolicy<DeviceType>::member_type& team);
+  SNASycl(const SNASycl<DeviceType,real_type,vector_length>& sna, const typename Kokkos::TeamPolicy<DeviceType>::member_type& team);
 
   inline
-  SNAKokkos(real_type, int, real_type, int, int, int, int, int, int, int);
+  SNASycl(real_type, int, real_type, int, int, int, int, int, int, int);
 
   __attribute__((always_inline))
-  ~SNAKokkos();
+  ~SNASycl();
 
   inline
-  void build_indexlist(); // SNAKokkos()
+  void build_indexlist(); // SNASycl()
 
   inline
   void init();            //
@@ -185,61 +184,47 @@ class SNAKokkos {
   int host_flag;
 
   // functions for bispectrum coefficients, GPU only
-  __attribute__((always_inline))
-  void compute_cayley_klein(const int&, const int&, const int&);
-  __attribute__((always_inline))
-  void pre_ui(const int&, const int&, const int&, const int&); // ForceSNAP
+  __attribute__((always_inline)) void compute_cayley_klein(const int&, const int&, const int&);
+  __attribute__((always_inline)) void pre_ui(const int&, const int&, const int&, const int&); // ForceSNAP
 
   // version of the code with parallelism over j_bend
-  __attribute__((always_inline))
-  void compute_ui_small(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int, const int); // ForceSNAP
+  __attribute__((always_inline)) void compute_ui_small(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int, const int); // ForceSNAP
   // version of the code without parallelism over j_bend
-  __attribute__((always_inline))
-  void compute_ui_large(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int); // ForceSNAP
+  __attribute__((always_inline)) void compute_ui_large(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int); // ForceSNAP
 
-  __attribute__((always_inline))
-  void compute_zi(const int&, const int&, const int&);    // ForceSNAP
-  __attribute__((always_inline))
-  void compute_yi(int,int,int,
-   const Kokkos::View<real_type***, Kokkos::LayoutLeft, DeviceType> &beta_pack); // ForceSNAP
-  __attribute__((always_inline))
-  void compute_yi_with_zlist(int,int,int,
-   const Kokkos::View<real_type***, Kokkos::LayoutLeft, DeviceType> &beta_pack); // ForceSNAP
-  __attribute__((always_inline))
-  void compute_bi(const int&, const int&, const int&);    // ForceSNAP
+  __attribute__((always_inline)) void compute_zi(const int&, const int&, const int&);    // ForceSNAP
+  __attribute__((always_inline)) void compute_yi(int,int,int, const stdex::mdspan<real_type, stdex::dextents<std::size_t, 3u>, stdex::layout_left> &beta_pack); // ForceSNAP
+  __attribute__((always_inline)) void compute_yi_with_zlist(int,int,int, const stdex::mdspan<real_type, stdex::dextents<std::size_t, 3u>, stdex::layout_left> &beta_pack); // ForceSNAP
+  __attribute__((always_inline)) void compute_bi(const int&, const int&, const int&);    // ForceSNAP
 
   // functions for derivatives, GPU only
   // version of the code with parallelism over j_bend
   template<int dir>
-  __attribute__((always_inline))
-  void compute_fused_deidrj_small(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int, const int); //ForceSNAP
+  __attribute__((always_inline)) void compute_fused_deidrj_small(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int, const int); //ForceSNAP
   // version of the code without parallelism over j_bend
   template<int dir>
-  __attribute__((always_inline))
-  void compute_fused_deidrj_large(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int); //ForceSNAP
+  __attribute__((always_inline)) void compute_fused_deidrj_large(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, const int, const int, const int); //ForceSNAP
 
   // core "evaluation" functions that get plugged into "compute" functions
   // plugged into compute_ui_small, compute_ui_large
   __attribute__((always_inline))
   void evaluate_ui_jbend(const WignerWrapper<real_type, vector_length>&, const complex&, const complex&, const real_type&, const int&,
-                        const int&, const int&, const int&);
+			 const int&, const int&, const int&);
   // plugged into compute_zi, compute_yi
   __attribute__((always_inline))
   complex evaluate_zi(const int&, const int&, const int&, const int&, const int&, const int&, const int&, const int&, const int&,
-                        const int&, const int&, const int&, const int&, const real_type*);
+		      const int&, const int&, const int&, const int&, const real_type*);
   // plugged into compute_yi, compute_yi_with_zlist
   __attribute__((always_inline))
   real_type evaluate_beta_scaled(const int&, const int&, const int&, const int&, const int&, const int&, const int&, const int&,
-                        const Kokkos::View<real_type***, Kokkos::LayoutLeft, DeviceType> &);
+			 const Kokkos::View<real_type***, Kokkos::LayoutLeft, DeviceType> &);
   // plugged into compute_fused_deidrj_small, compute_fused_deidrj_large
   __attribute__((always_inline))
   real_type evaluate_duidrj_jbend(const WignerWrapper<real_type, vector_length>&, const complex&, const complex&, const real_type&,
-                        const WignerWrapper<real_type, vector_length>&, const complex&, const complex&, const real_type&,
-                        const int&, const int&, const int&, const int&);
+				  const WignerWrapper<real_type, vector_length>&, const complex&, const complex&, const real_type&,
+				  const int&, const int&, const int&, const int&);
 
   // functions for bispectrum coefficients, CPU only
-  __attribute__((always_inline))
-  void pre_ui_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team,const int&,const int&); // ForceSNAP
   __attribute__((always_inline))
   void compute_ui_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int, int); // ForceSNAP
   __attribute__((always_inline))
@@ -326,24 +311,24 @@ class SNAKokkos {
   real_type rmin0, rfac0;
 
   //use indexlist instead of loops, constructor generates these
-  // Same across all SNAKokkos
-  Kokkos::View<idxz_struct*, DeviceType> idxz;
-  Kokkos::View<int*[3], DeviceType> idxb;
-  Kokkos::View<int***, DeviceType> idxcg_block;
+  // Same across all SNASycl
+  stdex::mdspan<idxz_struct, stdex::dextents<std::size_t, 1u>> idxz;
+  stdex::mdspan<int[3], stdex::dextents<std::size_t, 2u>> idxb;
+  stdex::mdspan<int, stdex::dextents<std::size_t, 3u>> idxcg_block;
 
  public:
-  Kokkos::View<int*, DeviceType> idxu_block;
-  Kokkos::View<int*, DeviceType> idxu_half_block;
-  Kokkos::View<int*, DeviceType> idxu_cache_block;
-  Kokkos::View<FullHalfMapper*, DeviceType> idxu_full_half;
+  stdex::mdspan<int, stdex::dextents<std::size_t, 1u>> idxu_block;
+  stdex::mdspan<int, stdex::dextents<std::size_t, 1u>> idxu_half_block;
+  stdex::mdspan<int, stdex::dextents<std::size_t, 1u>> idxu_cache_block;
+  stdex::mdspan<FullHalfMapper, stdex::dextents<std::size_t, 1u>> idxu_full_half;
 
  private:
-  Kokkos::View<int***, DeviceType> idxz_block;
-  Kokkos::View<int***, DeviceType> idxb_block;
+  stdex::mdspan<int, stdex::dextents<std::size_t, 3u>> idxz_block;
+  stdex::mdspan<int, stdex::dextents<std::size_t, 3u>> idxb_block;
 
   // data for bispectrum coefficients
 
-  // Same across all SNAKokkos
+  // Same across all SNASycl
   t_sna_1d cglist;
   t_sna_2d rootpqarray;
 
@@ -353,9 +338,9 @@ class SNAKokkos {
   double factorial(int);
 
   __attribute__((always_inline))
-  void create_team_scratch_arrays(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team); // SNAKokkos()
+  void create_team_scratch_arrays(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team); // SNASycl()
   __attribute__((always_inline))
-  void create_thread_scratch_arrays(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team); // SNAKokkos()
+  void create_thread_scratch_arrays(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team); // SNASycl()
 
   inline
   void init_clebsch_gordan(); // init()
@@ -376,7 +361,7 @@ class SNAKokkos {
   double deltacg(int, int, int);  // init_clebsch_gordan
 
   inline
-  int compute_ncoeff();           // SNAKokkos()
+  int compute_ncoeff();           // SNASycl()
   __attribute__((always_inline))
   void compute_duarray_cpu(const typename Kokkos::TeamPolicy<DeviceType>::member_type& team, int, int,
                        const real_type&, const real_type&, const real_type&, // compute_duidrj_cpu
@@ -402,11 +387,10 @@ class SNAKokkos {
   int wselfall_flag;
 
   int bzero_flag; // 1 if bzero subtracted from barray
-  Kokkos::View<real_type*, DeviceType> bzero; // array of B values for isolated atoms
+  stdex::mdspan<real_type, stdex::dextents<std::size_t, 1u>> bzero; // array of B values for isolated atoms
 };
 
 }
 
 #include "sna_kokkos_impl.h"
 #endif
-

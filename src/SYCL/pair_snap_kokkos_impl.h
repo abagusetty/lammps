@@ -880,6 +880,9 @@ void PairSNAPKokkos<DeviceType, real_type, vector_length>::operator() (TagPairSN
   my_sna.compute_yi(iatom_mod,jjz,iatom_div,d_beta_pack);
 }
 
+// ABB: 1. I dont understand why the name of the work-tag is also passed as an argument ?
+// ABB: 2. How does the info on the thread-Idx get to the functor ?
+// ABB: 3. Visibility of "snaKK" to the PairSNAPKokkos class ?
 template<class DeviceType, typename real_type, int vector_length>
 KOKKOS_INLINE_FUNCTION
 void PairSNAPKokkos<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeYiWithZlist,const int iatom_mod, const int jjz, const int iatom_div) const {

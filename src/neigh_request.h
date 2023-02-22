@@ -25,6 +25,7 @@ class NeighRequest : protected Pointers {
   friend class NPair;
   friend class NStencil;
   friend class NeighborKokkos;
+  friend class NeighborSycl;  
   friend class NPairSkipIntel;
   friend class FixIntel;
 
@@ -76,7 +77,7 @@ class NeighRequest : protected Pointers {
   int bond;            // 1 if store bond neighbors instead of atom neighs
   int omp;             // set by OPENMP package
   int intel;           // set by INTEL package
-  int kokkos_host;     // set by KOKKOS package
+  int kokkos_host;     // set by SYCL & KOKKOS package
   int kokkos_device;
   int ssa;          // set by DPD-REACT package, for Shardlow lists
   int cut;          // 1 if use a non-standard cutoff length

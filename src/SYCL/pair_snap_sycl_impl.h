@@ -17,7 +17,7 @@
                          Evan Weinberg (NVIDIA)
 ------------------------------------------------------------------------- */
 
-#include "pair_snap_kokkos.h"
+#include "pair_snap_sycl.h"
 
 #include "atom_kokkos.h"
 #include "atom_masks.h"
@@ -52,28 +52,25 @@ namespace LAMMPS_NS {
 //static double t7 = 0.0;
 /* ---------------------------------------------------------------------- */
 
-template<class DeviceType, typename real_type, int vector_length>
-PairSNAPSycl<DeviceType, real_type, vector_length>::PairSNAPSycl(LAMMPS *lmp) : PairSNAP(lmp)
+template<typename real_type, int vector_length>
+PairSNAPSycl<real_type, vector_length>::PairSNAPSycl(LAMMPS *lmp) : PairSNAP(lmp)
 {
   respa_enable = 0;
 
   kokkosable = 1;
   atomKK = (AtomKokkos *) atom;
-  execution_space = ExecutionSpaceFromDevice<DeviceType>::space;
   datamask_read = EMPTY_MASK;
   datamask_modify = EMPTY_MASK;
 
   k_cutsq = tdual_fparams("PairSNAPSycl::cutsq",atom->ntypes+1,atom->ntypes+1);
   auto d_cutsq = k_cutsq.template view<DeviceType>();
   rnd_cutsq = d_cutsq;
-
-  host_flag = (execution_space == Host);
 }
 
 /* ---------------------------------------------------------------------- */
 
-template<class DeviceType, typename real_type, int vector_length>
-PairSNAPSycl<DeviceType, real_type, vector_length>::~PairSNAPSycl()
+template<typename real_type, int vector_length>
+PairSNAPSycl<real_type, vector_length>::~PairSNAPSycl()
 {
   if (copymode) return;
 
@@ -86,13 +83,13 @@ PairSNAPSycl<DeviceType, real_type, vector_length>::~PairSNAPSycl()
    init specific to this pair style
 ------------------------------------------------------------------------- */
 
-template<class DeviceType, typename real_type, int vector_length>
-void PairSNAPSycl<DeviceType, real_type, vector_length>::init_style()
+template<typename real_type, int vector_length>
+void PairSNAPSycl<real_type, vector_length>::init_style()
 {
   if (host_flag) {
     if (lmp->kokkos->nthreads > 1)
-      error->all(FLERR,"Pair style snap/kk can currently only run on a single "
-                         "CPU thread");
+      error->all(FLERR,"Pair style snap/sycl can currently only run on a single "
+		 "CPU thread");
 
     PairSNAP::init_style();
     return;
@@ -101,16 +98,16 @@ void PairSNAPSycl<DeviceType, real_type, vector_length>::init_style()
   if (force->newton_pair == 0)
     error->all(FLERR,"Pair style SNAP requires newton pair on");
 
-  // neighbor list request for KOKKOS
+  // neighbor list request for SYCL
 
-  neighflag = lmp->kokkos->neighflag;
+  neighflag = lmp->sycl->neighflag;
 
   auto request = neighbor->add_request(this, NeighConst::REQ_FULL);
-  request->set_kokkos_host(std::is_same<DeviceType,LMPHostType>::value &&
+  request->set_sycl_host(std::is_same<DeviceType,LMPHostType>::value &&
                            !std::is_same<DeviceType,LMPDeviceType>::value);
-  request->set_kokkos_device(std::is_same<DeviceType,LMPDeviceType>::value);
+  request->set_sycl_device(std::is_same<DeviceType,LMPDeviceType>::value);
   if (neighflag == FULL)
-    error->all(FLERR,"Must use half neighbor list style with pair snap/kk");
+    error->all(FLERR,"Must use half neighbor list style with pair snap/sycl");
 }
 
 /* ---------------------------------------------------------------------- */
@@ -135,7 +132,7 @@ struct FindMaxNumNeighs {
    This version is a straightforward implementation
    ---------------------------------------------------------------------- */
 
-template<class DeviceType, typename real_type, int vector_length>
+template<typename real_type, int vector_length>
 void PairSNAPSycl<DeviceType, real_type, vector_length>::compute(int eflag_in, int vflag_in)
 {
   if (host_flag) {
@@ -408,7 +405,7 @@ void PairSNAPSycl<DeviceType, real_type, vector_length>::compute(int eflag_in, i
 
 
 	  ////////////////////Start: SYCL implementation here ////////////////////////////////
-          Snap3DRangePolicy<DeviceType, tile_size_compute_yi, TagPairSNAPComputeYiWithZlist>
+          Snap3DRangePolicy<tile_size_compute_yi, TagPairSNAPComputeYiWithZlist>
               policy_compute_yi({0,0,0},{vector_length,idxz_max,chunk_size_div},{vector_length,tile_size_compute_yi,1});
           Kokkos::parallel_for("ComputeYiWithZlist",policy_compute_yi,*this);
 
@@ -890,10 +887,10 @@ void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAP
   }
 }
 
-template<class DeviceType, typename real_type, int vector_length>
+template<typename real_type, int vector_length>
 __attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeYi,const int iatom_mod, const int jjz, const int iatom_div) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
+void PairSNAPSycl<real_type, vector_length>::operator() (TagPairSNAPComputeYi,const int iatom_mod, const int jjz, const int iatom_div) const {
+  SNAKokkos<real_type, vector_length> my_sna = snaKK;
 
   const int iatom = iatom_mod + iatom_div * vector_length;
   if (iatom >= chunk_size) return;
@@ -904,9 +901,9 @@ void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAP
 }
 
 template<typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<real_type, vector_length>::operator() (TagPairSNAPComputeYiWithZlist,const int iatom_mod, const int jjz, const int iatom_div) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
+__attribute__((always_inline)) [[sycl::reqd_sub_group_size(16)]]
+void PairSNAPSycl<real_type, vector_length>::operator() (TagPairSNAPComputeYiWithZlist, const int iatom_mod, const int jjz, const int iatom_div) const {
+  SNAKokkos<real_type, vector_length> my_sna = snaKK;
 
   const int iatom = iatom_mod + iatom_div * vector_length;
   if (iatom >= chunk_size) return;
@@ -914,12 +911,12 @@ void PairSNAPSycl<real_type, vector_length>::operator() (TagPairSNAPComputeYiWit
   if (jjz >= my_sna.idxz_max) return;
 
   my_sna.compute_yi_with_zlist(iatom_mod,jjz,iatom_div,d_beta_pack);
-}
+}  
 
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeZi,const int iatom_mod, const int jjz, const int iatom_div) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
+template<typename real_type, int vector_length>
+__attribute__((always_inline)) [[sycl::reqd_sub_group_size(16)]]
+void PairSNAPSycl<real_type, vector_length>::operator() (TagPairSNAPComputeZi,const int iatom_mod, const int jjz, const int iatom_div) const {
+  SNAKokkos<real_type, vector_length> my_sna = snaKK;
 
   const int iatom = iatom_mod + iatom_div * vector_length;
   if (iatom >= chunk_size) return;
@@ -929,10 +926,10 @@ void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAP
   my_sna.compute_zi(iatom_mod,jjz,iatom_div);
 }
 
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
+template<typename real_type, int vector_length>
+__attribute__((always_inline)) [[sycl::reqd_sub_group_size(16)]]
 void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeBi,const int iatom_mod, const int jjb, const int iatom_div) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
+  SNAKokkos<real_type, vector_length> my_sna = snaKK;
 
   const int iatom = iatom_mod + iatom_div * vector_length;
   if (iatom >= chunk_size) return;
@@ -1016,266 +1013,6 @@ void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAP
     my_sna.template compute_fused_deidrj_large<dir>(team, iatom_mod, jj, iatom_div);
 
   });
-}
-
-/* ----------------------------------------------------------------------
-   Begin routines that are unique to the CPU codepath. These do not take
-   advantage of AoSoA data layouts, but that could be a good point of
-   future optimization and unification with the above kernels. It's unlikely
-   that scratch memory optimizations will ever be useful for the CPU due to
-   different arithmetic intensity requirements for the CPU vs GPU.
-------------------------------------------------------------------------- */
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPBetaCPU,const int& ii) const {
-
-  const int i = d_ilist[ii + chunk_offset];
-  const int itype = type[i];
-  const int ielem = d_map[itype];
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-
-  auto d_coeffi = Kokkos::subview(d_coeffelem, ielem, Kokkos::ALL);
-
-  for (int icoeff = 0; icoeff < ncoeff; icoeff++)
-    d_beta(icoeff,ii) = d_coeffi[icoeff+1];
-
-  if (quadraticflag) {
-    const auto idxb_max = my_sna.idxb_max;
-    int k = ncoeff+1;
-    for (int icoeff = 0; icoeff < ncoeff; icoeff++) {
-      const auto idxb = icoeff % idxb_max;
-      const auto idx_chem = icoeff / idxb_max;
-      real_type bveci = my_sna.blist(ii,idx_chem,idxb);
-      d_beta(icoeff,ii) += d_coeffi[k]*bveci;
-      k++;
-      for (int jcoeff = icoeff+1; jcoeff < ncoeff; jcoeff++) {
-        const auto jdxb = jcoeff % idxb_max;
-        const auto jdx_chem = jcoeff / idxb_max;
-        real_type bvecj = my_sna.blist(ii,jdx_chem,jdxb);
-        d_beta(icoeff,ii) += d_coeffi[k]*bvecj;
-        d_beta(jcoeff,ii) += d_coeffi[k]*bveci;
-        k++;
-      }
-    }
-  }
-}
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeNeighCPU,const typename Kokkos::TeamPolicy<DeviceType,TagPairSNAPComputeNeighCPU>::member_type& team) const {
-
-
-  int ii = team.league_rank();
-  const int i = d_ilist[ii + chunk_offset];
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-  const double xtmp = x(i,0);
-  const double ytmp = x(i,1);
-  const double ztmp = x(i,2);
-  const int itype = type[i];
-  const int ielem = d_map[itype];
-  const double radi = d_radelem[ielem];
-
-  const int num_neighs = d_numneigh[i];
-
-  // rij[][3] = displacements between atom I and those neighbors
-  // inside = indices of neighbors of I within cutoff
-  // wj = weights for neighbors of I within cutoff
-  // rcutij = cutoffs for neighbors of I within cutoff
-  // note Rij sign convention => dU/dRij = dU/dRj = -dU/dRi
-
-  int ninside = 0;
-  Kokkos::parallel_reduce(Kokkos::TeamThreadRange(team,num_neighs),
-      [&] (const int jj, int& count) {
-    Kokkos::single(Kokkos::PerThread(team), [&] () {
-      T_INT j = d_neighbors(i,jj);
-      const F_FLOAT dx = x(j,0) - xtmp;
-      const F_FLOAT dy = x(j,1) - ytmp;
-      const F_FLOAT dz = x(j,2) - ztmp;
-
-      const int jtype = type(j);
-      const F_FLOAT rsq = dx*dx + dy*dy + dz*dz;
-
-      if (rsq < rnd_cutsq(itype,jtype))
-       count++;
-    });
-  },ninside);
-
-  d_ninside(ii) = ninside;
-
-  if (team.team_rank() == 0)
-  Kokkos::parallel_scan(Kokkos::ThreadVectorRange(team,num_neighs),
-      [&] (const int jj, int& offset, bool final) {
-  //for (int jj = 0; jj < num_neighs; jj++) {
-    T_INT j = d_neighbors(i,jj);
-    const F_FLOAT dx = x(j,0) - xtmp;
-    const F_FLOAT dy = x(j,1) - ytmp;
-    const F_FLOAT dz = x(j,2) - ztmp;
-
-    const int jtype = type(j);
-    const F_FLOAT rsq = dx*dx + dy*dy + dz*dz;
-    const int jelem = d_map[jtype];
-
-    if (rsq < rnd_cutsq(itype,jtype)) {
-      if (final) {
-        my_sna.rij(ii,offset,0) = static_cast<real_type>(dx);
-        my_sna.rij(ii,offset,1) = static_cast<real_type>(dy);
-        my_sna.rij(ii,offset,2) = static_cast<real_type>(dz);
-        my_sna.wj(ii,offset) = static_cast<real_type>(d_wjelem[jelem]);
-        my_sna.rcutij(ii,offset) = static_cast<real_type>((radi + d_radelem[jelem])*rcutfac);
-        my_sna.inside(ii,offset) = j;
-        if (switchinnerflag) {
-          my_sna.sinnerij(ii,offset) = 0.5*(d_sinnerelem[ielem] + d_sinnerelem[jelem]);
-          my_sna.dinnerij(ii,offset) = 0.5*(d_dinnerelem[ielem] + d_dinnerelem[jelem]);
-        }
-        if (chemflag)
-          my_sna.element(ii,offset) = jelem;
-        else
-          my_sna.element(ii,offset) = 0;
-      }
-      offset++;
-    }
-  });
-}
-
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPPreUiCPU,const typename Kokkos::TeamPolicy<DeviceType,TagPairSNAPPreUiCPU>::member_type& team) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-
-  // Extract the atom number
-  const int ii = team.team_rank() + team.team_size() * team.league_rank();
-  if (ii >= chunk_size) return;
-  int itype = type(ii);
-  int ielem = d_map[itype];
-
-  my_sna.pre_ui_cpu(team,ii,ielem);
-}
-
-
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeUiCPU,const typename Kokkos::TeamPolicy<DeviceType,TagPairSNAPComputeUiCPU>::member_type& team) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-
-  // Extract the atom number
-  int ii = team.team_rank() + team.team_size() * (team.league_rank() % ((chunk_size+team.team_size()-1)/team.team_size()));
-  if (ii >= chunk_size) return;
-
-  // Extract the neighbor number
-  const int jj = team.league_rank() / ((chunk_size+team.team_size()-1)/team.team_size());
-  const int ninside = d_ninside(ii);
-  if (jj >= ninside) return;
-
-  my_sna.compute_ui_cpu(team,ii,jj);
-}
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPTransformUiCPU, const int j, const int iatom) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-
-  if (iatom >= chunk_size) return;
-
-  if (j > twojmax) return;
-
-  int elem_count = chemflag ? nelements : 1;
-
-  // De-symmetrize ulisttot
-  for (int ielem = 0; ielem < elem_count; ielem++) {
-
-    const int jju_half = my_sna.idxu_half_block(j);
-    const int jju = my_sna.idxu_block(j);
-
-    for (int mb = 0; 2*mb <= j; mb++) {
-      for (int ma = 0; ma <= j; ma++) {
-        // Extract top half
-
-        const int idxu_shift = mb * (j + 1) + ma;
-        const int idxu_half = jju_half + idxu_shift;
-        const int idxu = jju + idxu_shift;
-
-        // Load ulist
-        auto utot = my_sna.ulisttot(idxu_half, ielem, iatom);
-
-        // Store
-        my_sna.ulisttot_full(idxu, ielem, iatom) = utot;
-
-        // Zero Yi
-        my_sna.ylist(idxu_half, ielem, iatom) = {0., 0.};
-
-        // Symmetric term
-        const int sign_factor = (((ma+mb)%2==0)?1:-1);
-        const int idxu_flip = jju + (j + 1 - mb) * (j + 1) - (ma + 1);
-
-        if (sign_factor == 1) {
-          utot.im = -utot.im;
-        } else {
-          utot.re = -utot.re;
-        }
-
-        my_sna.ulisttot_full(idxu_flip, ielem, iatom) = utot;
-      }
-    }
-  }
-}
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeYiCPU,const int& ii) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-  my_sna.compute_yi_cpu(ii,d_beta);
-}
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeZiCPU,const int& ii) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-  my_sna.compute_zi_cpu(ii);
-}
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeBiCPU,const typename Kokkos::TeamPolicy<DeviceType,TagPairSNAPComputeBiCPU>::member_type& team) const {
-  int ii = team.league_rank();
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-  my_sna.compute_bi_cpu(team,ii);
-}
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeDuidrjCPU,const typename Kokkos::TeamPolicy<DeviceType,TagPairSNAPComputeDuidrjCPU>::member_type& team) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-
-  // Extract the atom number
-  int ii = team.team_rank() + team.team_size() * (team.league_rank() % ((chunk_size+team.team_size()-1)/team.team_size()));
-  if (ii >= chunk_size) return;
-
-  // Extract the neighbor number
-  const int jj = team.league_rank() / ((chunk_size+team.team_size()-1)/team.team_size());
-  const int ninside = d_ninside(ii);
-  if (jj >= ninside) return;
-
-  my_sna.compute_duidrj_cpu(team,ii,jj);
-}
-
-template<class DeviceType, typename real_type, int vector_length>
-__attribute__((always_inline))
-void PairSNAPSycl<DeviceType, real_type, vector_length>::operator() (TagPairSNAPComputeDeidrjCPU,const typename Kokkos::TeamPolicy<DeviceType,TagPairSNAPComputeDeidrjCPU>::member_type& team) const {
-  SNAKokkos<DeviceType, real_type, vector_length> my_sna = snaKK;
-
-  // Extract the atom number
-  int ii = team.team_rank() + team.team_size() * (team.league_rank() % ((chunk_size+team.team_size()-1)/team.team_size()));
-  if (ii >= chunk_size) return;
-
-  // Extract the neighbor number
-  const int jj = team.league_rank() / ((chunk_size+team.team_size()-1)/team.team_size());
-  const int ninside = d_ninside(ii);
-  if (jj >= ninside) return;
-
-  my_sna.compute_deidrj_cpu(team,ii,jj);
 }
 
 /* ----------------------------------------------------------------------
