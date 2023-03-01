@@ -673,7 +673,7 @@ endif()
 # packages which selectively include variants based on enabled styles
 # e.g. accelerator packages
 ######################################################################
-foreach(PKG_WITH_INCL CORESHELL DPD-SMOOTH MC MISC PHONON QEQ OPENMP KOKKOS OPT INTEL GPU)
+foreach(PKG_WITH_INCL CORESHELL DPD-SMOOTH MC MISC PHONON QEQ OPENMP KOKKOS SYCL OPT INTEL GPU)
   if(PKG_${PKG_WITH_INCL})
     include(Packages/${PKG_WITH_INCL})
   endif()
@@ -1020,16 +1020,7 @@ if(PKG_GPU)
   message(STATUS "GPU precision:            ${GPU_PREC}")
 endif()
 if(PKG_SYCL)
-    # Downlaod and install Kokkos/mdspan
-    include(FetchContent)
-    set( KOKKOS_MDSPAN_REPOSITORY https://github.com/kokkos/mdspan.git )
-    set( KOKKOS_MDSPAN_REVISION   stable )
-    FetchContent_Declare(
-      mdspan
-      GIT_REPOSITORY ${KOKKOS_MDSPAN_REPOSITORY}
-      GIT_TAG        ${KOKKOS_MDSPAN_REVISION}
-    )
-    FetchContent_MakeAvailable( mdspan )
+  message(STATUS "SYCL Devices: ${KOKKOS_DEVICE}")
 endif(PKG_SYCL)
 if(PKG_KOKKOS)
   message(STATUS "Kokkos Devices: ${KOKKOS_DEVICE}")

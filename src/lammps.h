@@ -42,8 +42,8 @@ class LAMMPS {
   class AtomKokkos *atomKK;        // KOKKOS version of Atom class
   class MemoryKokkos *memoryKK;    // KOKKOS version of Memory class
   class SyclLMP *sycl;             // SYCL accelerator class
-  class AtomSycl *atomKK;          // SYCL version of Atom class
-  class MemorySycl *memoryKK;      // SYCL version of Memory class
+  class AtomSycl *atomSYCL;          // SYCL version of Atom class
+  class MemorySycl *memorySYCL;      // SYCL version of Memory class
   class Python *python;            // Python interface
   class CiteMe *citeme;            // handle citation info
 

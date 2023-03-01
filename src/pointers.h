@@ -129,8 +129,8 @@ class Pointers {
 
   class AtomKokkos *&atomKK;
   class MemoryKokkos *&memoryKK;
-  class AtomSYCL *&atomSYCL;
-  class MemorySYCL *&memorySYCL;
+  class AtomSycl *&atomSYCL;
+  class MemorySycl *&memorySYCL;
   
   class Python *&python;
 };

@@ -74,8 +74,8 @@ PairSNAPSycl<real_type, vector_length>::~PairSNAPSycl()
 {
   if (copymode) return;
 
-  memoryKK->destroy_kokkos(k_eatom,eatom);
-  memoryKK->destroy_kokkos(k_vatom,vatom);
+  memoryKK->destroy_mdspan(k_eatom,eatom);
+  memoryKK->destroy_mdspan(k_vatom,vatom);
 }
 
 
@@ -152,13 +152,13 @@ void PairSNAPSycl<DeviceType, real_type, vector_length>::compute(int eflag_in, i
   // reallocate per-atom arrays if necessary
 
   if (eflag_atom) {
-    memoryKK->destroy_kokkos(k_eatom,eatom);
-    memoryKK->create_kokkos(k_eatom,eatom,maxeatom,"pair:eatom");
+    memoryKK->destroy_mdspan(k_eatom,eatom);
+    memoryKK->create_mdspan(k_eatom,eatom,maxeatom,"pair:eatom");
     d_eatom = k_eatom.view<DeviceType>();
   }
   if (vflag_atom) {
-    memoryKK->destroy_kokkos(k_vatom,vatom);
-    memoryKK->create_kokkos(k_vatom,vatom,maxvatom,"pair:vatom");
+    memoryKK->destroy_mdspan(k_vatom,vatom);
+    memoryKK->create_mdspan(k_vatom,vatom,maxvatom,"pair:vatom");
     d_vatom = k_vatom.view<DeviceType>();
   }
 

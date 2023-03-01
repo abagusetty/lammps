@@ -105,7 +105,7 @@ TYPE destroy_kokkos(TYPE &data)
 }
 
 template <typename TYPE>
-TYPE create_mdspan(TYPE &data, int n1, const char *name)
+TYPE create_mdspan(TYPE &data, std::size_t n1, const char *name)
 {
   /*typename TYPE::non_const_value_type* ptr = (typename TYPE::non_const_value_type*)
     malloc(n1*sizeof(typename TYPE::non_const_value_type)*4);*/
@@ -114,7 +114,7 @@ TYPE create_mdspan(TYPE &data, int n1, const char *name)
 }
 
 template <typename TYPE>
-TYPE create_mdspan(TYPE &data, int n1, int n2, const char *name)
+TYPE create_mdspan(TYPE &data, std::size_t n1, std::size_t n2, const char *name)
 {
   /*typename TYPE::non_const_value_type* ptr = (typename TYPE::non_const_value_type*)
     malloc(n1*n2*sizeof(typename TYPE::non_const_value_type)*4);*/
@@ -123,7 +123,7 @@ TYPE create_mdspan(TYPE &data, int n1, int n2, const char *name)
 }
 
 template <typename TYPE>
-TYPE create_mdspan(TYPE &data, int n1, int n2, int n3 ,const char *name)
+TYPE create_mdspan(TYPE &data, std::size_t n1, std::size_t n2, std::size_t n3 ,const char *name)
 {
   /*typename TYPE::non_const_value_type* ptr = (typename TYPE::non_const_value_type*)
     malloc(n1*n2*n3*sizeof(typename TYPE::non_const_value_type)*4);*/
@@ -132,7 +132,7 @@ TYPE create_mdspan(TYPE &data, int n1, int n2, int n3 ,const char *name)
 }
 
 template <typename TYPE>
-TYPE create_mdspan(TYPE &data, int n1, int n2, int n3, int n4 ,const char *name)
+TYPE create_mdspan(TYPE &data, std::size_t n1, std::size_t n2, std::size_t n3, std::size_t n4 ,const char *name)
 {
   /*typename TYPE::non_const_value_type* ptr = (typename TYPE::non_const_value_type*)
     malloc(n1*n2*n3*n4*sizeof(typename TYPE::non_const_value_type)*4);*/
@@ -141,7 +141,7 @@ TYPE create_mdspan(TYPE &data, int n1, int n2, int n3, int n4 ,const char *name)
 }
 
 template <typename TYPE>
-TYPE create_mdspan(TYPE &data, int n1, int n2, int n3, int n4, int n5 ,const char *name)
+TYPE create_mdspan(TYPE &data, std::size_t n1, std::size_t n2, std::size_t n3, std::size_t n4, std::size_t n5 ,const char *name)
 {
   /*typename TYPE::non_const_value_type* ptr = (typename TYPE::non_const_value_type*)
     malloc(n1*n2*n3*n4*n5*sizeof(typename TYPE::non_const_value_type)*4);*/
@@ -150,7 +150,7 @@ TYPE create_mdspan(TYPE &data, int n1, int n2, int n3, int n4, int n5 ,const cha
 }
 
 template <typename TYPE>
-TYPE create_mdspan(TYPE &data, int n1, int n2, int n3, int n4, int n5 , int n6 ,const char *name)
+TYPE create_mdspan(TYPE &data, std::size_t n1, std::size_t n2, std::size_t n3, std::size_t n4, std::size_t n5 , std::size_t n6 ,const char *name)
 {
   /*typename TYPE::non_const_value_type* ptr = (typename TYPE::non_const_value_type*)
     malloc(n1*n2*n3*n4*n5*n6*sizeof(typename TYPE::non_const_value_type)*4);*/
@@ -161,7 +161,7 @@ TYPE create_mdspan(TYPE &data, int n1, int n2, int n3, int n4, int n5 , int n6 ,
 
 
 template <typename TYPE, typename HTYPE>
-  TYPE create_mdspan(TYPE &data, HTYPE &h_data, int n1, int n2,
+  TYPE create_mdspan(TYPE &data, HTYPE &h_data, std::size_t n1, std::size_t n2,
                      const char *name)
 {
   data = TYPE(std::string(name),n1,n2);
@@ -171,7 +171,7 @@ template <typename TYPE, typename HTYPE>
 
 template <typename TYPE>
 TYPE create_mdspan(TYPE &data, typename TYPE::value_type **&array,
-                   int n1, int n2, const char *name)
+                   std::size_t n1, std::size_t n2, const char *name)
 {
   data = TYPE(std::string(name),n1,n2);
   bigint nbytes = ((bigint) sizeof(typename TYPE::value_type *)) * n1;
@@ -188,7 +188,7 @@ TYPE create_mdspan(TYPE &data, typename TYPE::value_type **&array,
 
 template <typename TYPE, typename HTYPE>
   TYPE create_mdspan(TYPE &data, HTYPE &h_data,
-                     typename TYPE::value_type **&array, int n1, int n2,
+                     typename TYPE::value_type **&array, std::size_t n1, std::size_t n2,
                      const char *name)
 {
   data = TYPE(std::string(name),n1,n2);

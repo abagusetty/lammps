@@ -19,6 +19,8 @@
 #include "lmptype.h"
 
 #include <sycl/sycl.hpp>
+#include <experimental/mdspan>
+namespace stdex = std::experimental;
 
 constexpr int FULL = 1;
 constexpr int HALFTHREAD = 2;
@@ -29,7 +31,7 @@ constexpr int HALF = 4;
 #define ISFINITE(x) sycl::isfinite(x)
 #endif
 
-#if defined(SYCL_ENABLE_CUDA) || defined(SYCL_ENABLE_HIP) || defined(SYCL_ENABLE_SYCL)
+#if defined(SYCL_ENABLE_CUDA) || defined(SYCL_ENABLE_HIP) || defined(SYCL_ENABLE_INTEL)
 #define LMP_SYCL_GPU
 #endif
 
@@ -41,12 +43,6 @@ constexpr int HALF = 4;
 
 #define MAX_TYPES_STACKPARAMS 12
 static constexpr LAMMPS_NS::bigint LMP_SYCL_AV_DELTA = 10;
-
-namespace Kokkos {
-  static auto NoInit = [](std::string const& label) {
-    return Kokkos::view_alloc(Kokkos::WithoutInitializing, label);
-  };
-}
 
 template<class Scalar_type>
 using t_scalar3 = sycl::vec<Scalar_type, 3>;
@@ -81,14 +77,9 @@ template<>
 struct AtomicDup<HALFTHREAD,Kokkos::Experimental::HIP> {
   using value = Kokkos::Experimental::ScatterAtomic;
 };
-#elif defined(SYCL_ENABLE_SYCL)
+#elif defined(SYCL_ENABLE_INTEL)
 template<>
 struct AtomicDup<HALFTHREAD,Kokkos::Experimental::SYCL> {
-  using value = Kokkos::Experimental::ScatterAtomic;
-};
-#elif defined(SYCL_ENABLE_OPENMPTARGET)
-template<>
-struct AtomicDup<HALFTHREAD,Kokkos::Experimental::OpenMPTarget> {
   using value = Kokkos::Experimental::ScatterAtomic;
 };
 #endif
@@ -225,19 +216,17 @@ struct dual_hash_type {
 
   template<class DeviceType>
   __attribute__((always_inline))
-  std::enable_if_t<(std::is_same<DeviceType,LMPDeviceType>::value || Kokkos::SpaceAccessibility<LMPDeviceType::memory_space,LMPHostType::memory_space>::accessible),hash_type&> view() {return d_view;}
+  std::enable_if_t<(std::is_same_v<DeviceType,LMPDeviceType> || Kokkos::SpaceAccessibility<LMPDeviceType::memory_space,LMPHostType::memory_space>::accessible),hash_type&> view() {return d_view;}
 
   template<class DeviceType>
   __attribute__((always_inline))
-  std::enable_if_t<!(std::is_same<DeviceType,LMPDeviceType>::value || Kokkos::SpaceAccessibility<LMPDeviceType::memory_space,LMPHostType::memory_space>::accessible),host_hash_type&> view() {return h_view;}
+  std::enable_if_t<!(std::is_same_v<DeviceType,LMPDeviceType> || Kokkos::SpaceAccessibility<LMPDeviceType::memory_space,LMPHostType::memory_space>::accessible),host_hash_type&> view() {return h_view;}
 
 };
 
-template <class DeviceType>
 struct ArrayTypes;
 
-template <>
-struct ArrayTypes<LMPDeviceType> {
+struct ArrayTypes {
 
 // scalar types
 
@@ -255,75 +244,63 @@ typedef tdual_float_scalar::t_dev_const_um t_float_scalar_const_um;
 
 // generic array types
 
-typedef Kokkos::
-  DualView<int*, LMPDeviceType::array_layout, LMPDeviceType> tdual_int_1d;
+typedef Kokkos::DualView<int*, LMPDeviceType::array_layout, LMPDeviceType> tdual_int_1d;
 typedef tdual_int_1d::t_dev t_int_1d;
 typedef tdual_int_1d::t_dev_const t_int_1d_const;
 typedef tdual_int_1d::t_dev_um t_int_1d_um;
 typedef tdual_int_1d::t_dev_const_um t_int_1d_const_um;
 typedef tdual_int_1d::t_dev_const_randomread t_int_1d_randomread;
 
-typedef Kokkos::
-  DualView<int*[3], Kokkos::LayoutRight, LMPDeviceType> tdual_int_1d_3;
+typedef Kokkos::DualView<int*[3], Kokkos::LayoutRight, LMPDeviceType> tdual_int_1d_3;
 typedef tdual_int_1d_3::t_dev t_int_1d_3;
 typedef tdual_int_1d_3::t_dev_const t_int_1d_3_const;
 typedef tdual_int_1d_3::t_dev_um t_int_1d_3_um;
 typedef tdual_int_1d_3::t_dev_const_um t_int_1d_3_const_um;
 typedef tdual_int_1d_3::t_dev_const_randomread t_int_1d_3_randomread;
 
-typedef Kokkos::
-  DualView<int**, Kokkos::LayoutRight, LMPDeviceType> tdual_int_2d;
+typedef Kokkos::DualView<int**, Kokkos::LayoutRight, LMPDeviceType> tdual_int_2d;
 typedef tdual_int_2d::t_dev t_int_2d;
 typedef tdual_int_2d::t_dev_const t_int_2d_const;
 typedef tdual_int_2d::t_dev_um t_int_2d_um;
 typedef tdual_int_2d::t_dev_const_um t_int_2d_const_um;
 typedef tdual_int_2d::t_dev_const_randomread t_int_2d_randomread;
 
-typedef Kokkos::
-  DualView<int**, LMPDeviceType::array_layout, LMPDeviceType> tdual_int_2d_dl;
+typedef Kokkos::DualView<int**, LMPDeviceType::array_layout, LMPDeviceType> tdual_int_2d_dl;
 typedef tdual_int_2d_dl::t_dev t_int_2d_dl;
 typedef tdual_int_2d_dl::t_dev_const t_int_2d_const_dl;
 typedef tdual_int_2d_dl::t_dev_um t_int_2d_um_dl;
 typedef tdual_int_2d_dl::t_dev_const_um t_int_2d_const_um_dl;
 typedef tdual_int_2d_dl::t_dev_const_randomread t_int_2d_randomread_dl;
 
-typedef Kokkos::
-  DualView<LAMMPS_NS::tagint*, LMPDeviceType::array_layout, LMPDeviceType>
-  tdual_tagint_1d;
+typedef Kokkos::ualView<LAMMPS_NS::tagint*, LMPDeviceType::array_layout, LMPDeviceType> tdual_tagint_1d;
 typedef tdual_tagint_1d::t_dev t_tagint_1d;
 typedef tdual_tagint_1d::t_dev_const t_tagint_1d_const;
 typedef tdual_tagint_1d::t_dev_um t_tagint_1d_um;
 typedef tdual_tagint_1d::t_dev_const_um t_tagint_1d_const_um;
 typedef tdual_tagint_1d::t_dev_const_randomread t_tagint_1d_randomread;
 
-typedef Kokkos::
-  DualView<LAMMPS_NS::tagint**, Kokkos::LayoutRight, LMPDeviceType>
-  tdual_tagint_2d;
+typedef Kokkos::DualView<LAMMPS_NS::tagint**, Kokkos::LayoutRight, LMPDeviceType> tdual_tagint_2d;
 typedef tdual_tagint_2d::t_dev t_tagint_2d;
 typedef tdual_tagint_2d::t_dev_const t_tagint_2d_const;
 typedef tdual_tagint_2d::t_dev_um t_tagint_2d_um;
 typedef tdual_tagint_2d::t_dev_const_um t_tagint_2d_const_um;
 typedef tdual_tagint_2d::t_dev_const_randomread t_tagint_2d_randomread;
 
-typedef Kokkos::
-  DualView<LAMMPS_NS::imageint*, LMPDeviceType::array_layout, LMPDeviceType>
-  tdual_imageint_1d;
+typedef Kokkos::DualView<LAMMPS_NS::imageint*, LMPDeviceType::array_layout, LMPDeviceType> tdual_imageint_1d;
 typedef tdual_imageint_1d::t_dev t_imageint_1d;
 typedef tdual_imageint_1d::t_dev_const t_imageint_1d_const;
 typedef tdual_imageint_1d::t_dev_um t_imageint_1d_um;
 typedef tdual_imageint_1d::t_dev_const_um t_imageint_1d_const_um;
 typedef tdual_imageint_1d::t_dev_const_randomread t_imageint_1d_randomread;
 
-typedef Kokkos::
-  DualView<double*, Kokkos::LayoutRight, LMPDeviceType> tdual_double_1d;
+typedef Kokkos::DualView<double*, Kokkos::LayoutRight, LMPDeviceType> tdual_double_1d;
 typedef tdual_double_1d::t_dev t_double_1d;
 typedef tdual_double_1d::t_dev_const t_double_1d_const;
 typedef tdual_double_1d::t_dev_um t_double_1d_um;
 typedef tdual_double_1d::t_dev_const_um t_double_1d_const_um;
 typedef tdual_double_1d::t_dev_const_randomread t_double_1d_randomread;
 
-typedef Kokkos::
-  DualView<double**, Kokkos::LayoutRight, LMPDeviceType> tdual_double_2d;
+typedef Kokkos::DualView<double**, Kokkos::LayoutRight, LMPDeviceType> tdual_double_2d;
 typedef tdual_double_2d::t_dev t_double_2d;
 typedef tdual_double_2d::t_dev_const t_double_2d_const;
 typedef tdual_double_2d::t_dev_um t_double_2d_um;
@@ -448,36 +425,6 @@ typedef tdual_virial_array::t_dev_const t_virial_array_const;
 typedef tdual_virial_array::t_dev_um t_virial_array_um;
 typedef tdual_virial_array::t_dev_const_um t_virial_array_const_um;
 typedef tdual_virial_array::t_dev_const_randomread t_virial_array_randomread;
-
-// Spin Types
-
-//3d SP_FLOAT array n*4
-#ifdef LMP_SYCL_NO_LEGACY
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutLeft, LMPDeviceType> tdual_float_1d_4;
-#else
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutRight, LMPDeviceType> tdual_float_1d_4;
-#endif
-typedef tdual_float_1d_4::t_dev t_sp_array;
-typedef tdual_float_1d_4::t_dev_const t_sp_array_const;
-typedef tdual_float_1d_4::t_dev_um t_sp_array_um;
-typedef tdual_float_1d_4::t_dev_const_um t_sp_array_const_um;
-typedef tdual_float_1d_4::t_dev_const_randomread t_sp_array_randomread;
-
-//3d FM_FLOAT array n*3
-
-typedef tdual_f_array::t_dev t_fm_array;
-typedef tdual_f_array::t_dev_const t_fm_array_const;
-typedef tdual_f_array::t_dev_um t_fm_array_um;
-typedef tdual_f_array::t_dev_const_um t_fm_array_const_um;
-typedef tdual_f_array::t_dev_const_randomread t_fm_array_randomread;
-
-//3d FML_FLOAT array n*3
-
-typedef tdual_f_array::t_dev t_fm_long_array;
-typedef tdual_f_array::t_dev_const t_fm_long_array_const;
-typedef tdual_f_array::t_dev_um t_fm_long_array_um;
-typedef tdual_f_array::t_dev_const_um t_fm_long_array_const_um;
-typedef tdual_f_array::t_dev_const_randomread t_fm_long_array_randomread;
 
 //Energy Types
 //1d E_FLOAT array n
@@ -632,6 +579,7 @@ typedef tdual_xfloat_1d::t_host_const_um t_xfloat_1d_const_um;
 typedef tdual_xfloat_1d::t_host_const_randomread t_xfloat_1d_randomread;
 
 //2d X_FLOAT array n*m
+typedef stdex::mdspan<X_FLOAT, stdex::dextents<std::size_t, 2u>, stdex::layout_right> tdual_xfloat_2d;
 typedef Kokkos::DualView<X_FLOAT**, Kokkos::LayoutRight, LMPDeviceType> tdual_xfloat_2d;
 typedef tdual_xfloat_2d::t_host t_xfloat_2d;
 typedef tdual_xfloat_2d::t_host_const t_xfloat_2d_const;
@@ -714,34 +662,6 @@ typedef tdual_virial_array::t_host_const t_virial_array_const;
 typedef tdual_virial_array::t_host_um t_virial_array_um;
 typedef tdual_virial_array::t_host_const_um t_virial_array_const_um;
 typedef tdual_virial_array::t_host_const_randomread t_virial_array_randomread;
-
-// Spin types
-
-//2d X_FLOAT array n*4
-#ifdef LMP_SYCL_NO_LEGACY
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutLeft, LMPDeviceType> tdual_float_1d_4;
-#else
-typedef Kokkos::DualView<X_FLOAT*[4], Kokkos::LayoutRight, LMPDeviceType> tdual_float_1d_4;
-#endif
-typedef tdual_float_1d_4::t_host t_sp_array;
-typedef tdual_float_1d_4::t_host_const t_sp_array_const;
-typedef tdual_float_1d_4::t_host_um t_sp_array_um;
-typedef tdual_float_1d_4::t_host_const_um t_sp_array_const_um;
-typedef tdual_float_1d_4::t_host_const_randomread t_sp_array_randomread;
-
-//2d F_FLOAT array n*3
-typedef tdual_f_array::t_host t_fm_array;
-typedef tdual_f_array::t_host_const t_fm_array_const;
-typedef tdual_f_array::t_host_um t_fm_array_um;
-typedef tdual_f_array::t_host_const_um t_fm_array_const_um;
-typedef tdual_f_array::t_host_const_randomread t_fm_array_randomread;
-
-//2d F_FLOAT array n*3
-typedef tdual_f_array::t_host t_fm_long_array;
-typedef tdual_f_array::t_host_const t_fm_long_array_const;
-typedef tdual_f_array::t_host_um t_fm_long_array_um;
-typedef tdual_f_array::t_host_const_um t_fm_long_array_const_um;
-typedef tdual_f_array::t_host_const_randomread t_fm_long_array_randomread;
 
 
 //Energy Types

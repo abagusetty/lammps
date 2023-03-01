@@ -22,10 +22,8 @@
 
 namespace LAMMPS_NS {
 
-template<class DeviceType>
 struct TagNeighborCheckDistance{};
 
-template<class DeviceType>
 struct TagNeighborXhold{};
 
 class NeighborSycl : public Neighbor {
